@@ -3479,6 +3479,8 @@
   "UI_DisplayRoles": "Display Roles",
   "UI_Display_Security": "Display Security menu in Account Settings",
   "UI_DisplayDirectory": "Display Directory button in sidebar",
+  "UI_Display_Integrations": "Display Integrations in Account Settings",
+  "UI_Display_Personal_Access_Tokens": "Display Personal Access Tokens in Account Settings",
   "UI_Group_Channels_By_Type": "Group channels by type",
   "UI_Merge_Channels_Groups": "Merge Private Groups with Channels",
   "UI_Unread_Counter_Style": "Unread Counter Style",
