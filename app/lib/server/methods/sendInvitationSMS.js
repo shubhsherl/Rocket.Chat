@@ -3,7 +3,7 @@ import { TAPi18n } from 'meteor/tap:i18n';
 import { check } from 'meteor/check';
 import _ from 'underscore';
 
-const supportedLanguages = ['en', 'es'];
+const supportedLanguages = ['en', 'es', 'pt', 'pt-BR'];
 
 Meteor.methods({
 	sendInvitationSMS(phones, language, realname) {
