@@ -119,3 +119,4 @@ import '../app/reactions/server';
 import '../app/livechat/server';
 import '../app/newsfeed/server';
 import '../app/follow/server';
+import '../app/articles/server';
