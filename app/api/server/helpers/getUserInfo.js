@@ -47,7 +47,7 @@ API.helperMethods.set('getUserInfo', function _getUserInfo(me) {
 
 	if (phoneFieldArray.length > 0) {
 		let dict = user;
-		for (let i = 0;i < phoneFieldArray.length - 1;i++) {
+		for (let i = 0; i < phoneFieldArray.length - 1; i++) {
 			if (phoneFieldArray[i] in dict) {
 				dict = dict[phoneFieldArray[i]];
 			}
