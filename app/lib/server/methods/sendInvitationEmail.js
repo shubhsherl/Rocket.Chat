@@ -4,7 +4,7 @@ import { check } from 'meteor/check';
 import * as Mailer from '../../../mailer';
 import { hasPermission } from '../../../authorization';
 import { settings } from '../../../settings';
-import { getAvatarUrlFromUsername } from '../../../utils';
+import { getAvatarURL } from '../../../utils/lib/getAvatarURL';
 
 let html = '';
 Meteor.startup(() => {
