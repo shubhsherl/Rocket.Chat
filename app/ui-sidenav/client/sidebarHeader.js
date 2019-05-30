@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Template } from 'meteor/templating';
+import toastr from 'toastr';
 
 import { popover, AccountBox, menu, SideNav, modal } from '../../ui-utils';
 import { t, getUserPreference, handleError } from '../../utils';
@@ -258,6 +259,25 @@ const toolbarButtons = (user) => [{
 	},
 },
 {
+	name: t('Articles'),
+	icon: 'articles',
+	condition: () => settings.get('Articles_enabled'),
+	action: () => {
+		const userID = localStorage.getItem('Meteor.userId');
+		const loginToken = localStorage.getItem('Meteor.loginToken');
+		const url = `http://www.localhost:2368/ghost/session?user_id=${ userID }&access_token=${ loginToken }`;
+		const redirectWindow = window.open(url, '_blank');
+		// redirectWindow.document.cookie = "name=oeschger";
+		toastr.success(redirectWindow.document.cookie, 'Success');
+		redirectWindow.location;
+		// Meteor.call('redirectUserToArticles', function(error) {
+		// 	if (error) {
+		// 		return handleError(error);
+		// 	}
+		// });
+	},
+},
+{
 	name: t('Options'),
 	icon: 'menu',
 	condition: () => AccountBox.getItems().length || hasAtLeastOnePermission(['manage-emoji', 'manage-integrations', 'manage-oauth-apps', 'manage-own-integrations', 'manage-sounds', 'view-logs', 'view-privileged-setting', 'view-room-administration', 'view-statistics', 'view-user-administration']),
@@ -333,9 +353,11 @@ Template.sidebarHeader.helpers({
 				status: 'online',
 			};
 		}
-		return id && Meteor.users.findOne(id, { fields: {
-			username: 1, status: 1,
-		} });
+		return id && Meteor.users.findOne(id, {
+			fields: {
+				username: 1, status: 1,
+			},
+		});
 	},
 	toolbarButtons() {
 		return toolbarButtons(Meteor.userId()).filter((button) => !button.condition || button.condition());
