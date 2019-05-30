@@ -11,7 +11,7 @@ import s from 'underscore.string';
 import toastr from 'toastr';
 
 import { settings } from '../../settings';
-import { SideNav, modal } from '../../ui-utils';
+import { SideNav, modal, redirectToUrl } from '../../ui-utils';
 import { t, handleError } from '../../utils';
 import { CachedCollection } from '../../ui-cached-collection';
 
@@ -567,6 +567,25 @@ Template.admin.events({
 				handleError(err);
 				return;
 			}
+			const args = [data.message].concat(data.params);
+			toastr.success(TAPi18n.__.apply(TAPi18n, args), TAPi18n.__('Success'));
+		});
+	},
+	'click button.link'() {
+		if (this.type !== 'link') {
+			return;
+		}
+		toastr.success('here', 'yo');
+		Meteor.call(this.value, function(err, data) {
+			if (err != null) {
+				err.details = _.extend(err.details || {}, {
+					errorTitle: 'Error',
+				});
+				handleError(err);
+				return;
+			}
+			toastr.success(data.message, 'yo');
+			if (data.link && data.options) { redirectToUrl(data.link, data.options); }
 			const args = [data.message].concat(data.params);
 			toastr.success(TAPi18n.__.apply(TAPi18n, args), TAPi18n.__('Success'));
 		});

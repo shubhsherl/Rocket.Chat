@@ -1,1 +1,1 @@
-console.log('Client side');
+import './admin';

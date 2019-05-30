@@ -11,11 +11,25 @@ Meteor.startup(() => {
 		this.add('Articles_enabled', defaults.enable, {
 			type: 'boolean',
 			i18nLabel: 'Enable',
+			public: true,
+		});
+
+		this.add('Article_Site_title', 'Rocket.Chat', {
+			type: 'string',
+			enableQuery: {
+				_id: 'Articles_enabled',
+				value: true,
+			},
+			public: true,
 		});
 
 		this.add('Articles_admin_panel', 'Articles_admin_panel', {
-			type: 'action',
-			actionText: 'Article_Admin_Panel',
+			type: 'link',
+			enableQuery: {
+				_id: 'Articles_enabled',
+				value: true,
+			},
+			linkText: 'Article_Admin_Panel',
 		});
 	});
 });
