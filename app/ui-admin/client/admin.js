@@ -11,7 +11,7 @@ import s from 'underscore.string';
 import toastr from 'toastr';
 
 import { settings } from '../../settings';
-import { SideNav, modal, redirectToUrl } from '../../ui-utils';
+import { SideNav, modal } from '../../ui-utils';
 import { t, handleError } from '../../utils';
 import { CachedCollection } from '../../ui-cached-collection';
 
@@ -575,8 +575,8 @@ Template.admin.events({
 		if (this.type !== 'link') {
 			return;
 		}
-		toastr.success('here', 'yo');
-		Meteor.call(this.value, function(err, data) {
+		const loginToken = localStorage.getItem('Meteor.loginToken');
+		Meteor.call(this.value, loginToken, function(err, data) {
 			if (err != null) {
 				err.details = _.extend(err.details || {}, {
 					errorTitle: 'Error',
@@ -584,8 +584,11 @@ Template.admin.events({
 				handleError(err);
 				return;
 			}
-			toastr.success(data.message, 'yo');
-			if (data.link && data.options) { redirectToUrl(data.link, data.options); }
+			if (data.link) {
+				const redirectWindow = window.open(data.link, '_blank');
+				redirectWindow.document.cookie = data.cookie;
+				redirectWindow.location;
+			}
 			const args = [data.message].concat(data.params);
 			toastr.success(TAPi18n.__.apply(TAPi18n, args), TAPi18n.__('Success'));
 		});
