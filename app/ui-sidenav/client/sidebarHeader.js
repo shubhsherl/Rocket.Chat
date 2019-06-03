@@ -263,18 +263,17 @@ const toolbarButtons = (user) => [{
 	icon: 'articles',
 	condition: () => settings.get('Articles_enabled'),
 	action: () => {
-		const userID = localStorage.getItem('Meteor.userId');
 		const loginToken = localStorage.getItem('Meteor.loginToken');
-		const url = `http://www.localhost:2368/ghost/session?user_id=${ userID }&access_token=${ loginToken }`;
-		const redirectWindow = window.open(url, '_blank');
-		// redirectWindow.document.cookie = "name=oeschger";
-		toastr.success(redirectWindow.document.cookie, 'Success');
-		redirectWindow.location;
-		// Meteor.call('redirectUserToArticles', function(error) {
-		// 	if (error) {
-		// 		return handleError(error);
-		// 	}
-		// });
+
+		Meteor.call('redirectUserToArticles', loginToken, (error, result) => {
+			if (error) {
+				return handleError(error);
+			}
+			const redirectWindow = window.open(result.link, '_blank');
+			redirectWindow.document.cookie = result.cookie;
+			toastr.success(result.message, 'Success');
+			redirectWindow.location;
+		});
 	},
 },
 {

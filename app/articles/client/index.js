@@ -1,1 +1,1 @@
-import './admin';
+console.log('articles');

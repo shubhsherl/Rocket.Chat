@@ -23,6 +23,15 @@ Meteor.startup(() => {
 			public: true,
 		});
 
+		this.add('Article_Site_Url', 'http://localhost:2368', {
+			type: 'string',
+			enableQuery: {
+				_id: 'Articles_enabled',
+				value: true,
+			},
+			public: true,
+		});
+
 		this.add('Articles_admin_panel', 'Articles_admin_panel', {
 			type: 'link',
 			enableQuery: {
