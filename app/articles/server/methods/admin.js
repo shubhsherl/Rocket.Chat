@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import _ from 'underscore';
+import { Random } from 'meteor/random';
 
 import { API } from '../utils/url';
 import { settings } from '../../../settings';
@@ -16,6 +17,11 @@ function getVerifiedEmail(emails) {
 function setupGhost(user, token) {
 	const rcUrl = Meteor.absoluteUrl().replace(/\/$/, '');
 	const blogTitle = settings.get('Article_Site_title');
+	const blogToken = Random.id(17);
+	const announceToken = `${blogToken}/${Random.id(24)}`;
+	const collabToken = `${blogToken}/${Random.id(24)}`;
+	settings.updateById('Announcement_Token', announce_token);
+	settings.updateById('Collaboration_Token', announce_token);
 	const data = {
 		setup: [{
 			rc_url: rcUrl,
@@ -23,6 +29,8 @@ function setupGhost(user, token) {
 			rc_token: token,
 			name: user.name,
 			email: getVerifiedEmail(user.emails),
+			announce_token: announceToken,
+			collaboration_token: collabToken,
 			blogTitle,
 		}],
 	};

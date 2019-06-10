@@ -32,6 +32,24 @@ Meteor.startup(() => {
 			public: true,
 		});
 
+		this.add('Announcement_Token', 'announcement_token', {
+			type: 'string',
+			enableQuery: {
+				_id: 'Articles_enabled',
+				value: true,
+			},
+			public: true,
+		});
+
+		this.add('Collaboration_Token', 'collaboration_token', {
+			type: 'string',
+			enableQuery: {
+				_id: 'Articles_enabled',
+				value: true,
+			},
+			public: true,
+		});
+
 		this.add('Articles_admin_panel', 'Articles_admin_panel', {
 			type: 'link',
 			enableQuery: {
