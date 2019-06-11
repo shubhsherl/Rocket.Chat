@@ -29,10 +29,11 @@ const Api = new Restivus({
 				}
 			}
 
-            this.announceToken  = settings.get('Announcement_Token');
+			this.announceToken = settings.get('Announcement_Token');
+			const { blogId } = this.request.params;
+			const token = decodeURIComponent(this.request.params.token);
 
-			if (this.announceToken !== decodeURIComponent(this.request.params.token)) {
-
+			if (this.announceToken !== `${ blogId }/${ token }`) {
 				return {
 					error: {
 						statusCode: 404,
@@ -54,8 +55,6 @@ const Api = new Restivus({
 });
 
 function executeAnnouncementRest() {
-
-
 	const defaultValues = {
 		channel: this.bodyParams.channel,
 		alias: this.bodyParams.alias,

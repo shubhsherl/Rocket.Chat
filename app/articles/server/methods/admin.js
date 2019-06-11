@@ -18,10 +18,10 @@ function setupGhost(user, token) {
 	const rcUrl = Meteor.absoluteUrl().replace(/\/$/, '');
 	const blogTitle = settings.get('Article_Site_title');
 	const blogToken = Random.id(17);
-	const announceToken = `${blogToken}/${Random.id(24)}`;
-	const collabToken = `${blogToken}/${Random.id(24)}`;
-	settings.updateById('Announcement_Token', announce_token);
-	settings.updateById('Collaboration_Token', announce_token);
+	const announceToken = `${ blogToken }/${ Random.id(24) }`;
+	const collabToken = `${ blogToken }/${ Random.id(24) }`;
+	settings.updateById('Announcement_Token', announceToken);
+	settings.updateById('Collaboration_Token', collabToken);
 	const data = {
 		setup: [{
 			rc_url: rcUrl,
@@ -70,6 +70,7 @@ Meteor.methods({
 				throw new Meteor.Error('Unable to redirect. Make sure Ghost is running.');
 			}
 		} catch (e) {
+			console.log(e);
 			throw new Meteor.Error(e.error || 'Unable to connect to Ghost. Make sure Ghost is running.');
 		}
 	},
