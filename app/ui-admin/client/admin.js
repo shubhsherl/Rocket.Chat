@@ -586,7 +586,6 @@ Template.admin.events({
 			}
 			if (data.link) {
 				const redirectWindow = window.open(data.link, '_blank');
-				redirectWindow.document.cookie = data.cookie;
 				redirectWindow.location;
 			}
 			const args = [data.message].concat(data.params);
