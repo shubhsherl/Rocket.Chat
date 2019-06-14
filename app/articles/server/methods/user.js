@@ -6,8 +6,6 @@ import { settings } from '../../../settings';
 
 const api = new API();
 
-// Adding user everytime when user redirects, server will return error if user already exist.
-// TODO: Find any better way exist.
 function addUser(user, accessToken) {
 	const data = {
 		user: [{
@@ -42,18 +40,11 @@ function inviteSetting() {
 	return false;
 }
 
-function createSession(options) {
-	const response = HTTP.call('POST', api.session(), options);
-	if (response.statusCode === 201 && response.content === 'Created' && response.headers && response.headers['set-cookie']) {
-		let cookie = response.headers['set-cookie'][0].split(';');
-		cookie = `${ cookie[0] };${ cookie[1] };${ cookie[2] };${ cookie[4] }`;
-		return {
-			link: api.siteUrl(),
-			cookie,
-			message: 'Ghost is Set up. Redirecting.',
-		};
-	}
-	throw new Meteor.Error('Unable to create Ghost Session.');
+function redirectGhost() {
+	return {
+		link: api.siteUrl(),
+		message: 'Ghost is Set up. Redirecting.',
+	};
 }
 
 Meteor.methods({
@@ -64,30 +55,21 @@ Meteor.methods({
 			throw new Meteor.Error('Articles are disabled');
 		}
 		const user = Meteor.users.findOne(Meteor.userId());
-		const options = {
-			data: {
-				rc_id: user._id,
-				rc_token: accessToken,
-			},
-			headers: {
-				'Content-Type': 'application/json',
-				Referer: api.siteUrl(),
-			},
-		};
+
 		try {
 			let response = HTTP.call('GET', api.setup());
 			if (response.data && response.data.setup && response.data.setup[0]) {
 				if (response.data.setup[0].status) { // Ghost site is already setup
 					const exist = userExist(user, accessToken);
 					if (exist) {
-						return createSession(options);
+						return redirectGhost();
 					}
 					const inviteOnly = inviteSetting();
 
 					if (!inviteOnly) {
 						response = addUser(user, accessToken);
 						if (response.statusCode === 200) {
-							return createSession(options);
+							return redirectGhost();
 						}
 						throw new Meteor.Error('Unable to setup your account.');
 					} else {
