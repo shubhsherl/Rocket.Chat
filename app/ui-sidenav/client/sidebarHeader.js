@@ -270,7 +270,6 @@ const toolbarButtons = (user) => [{
 				return handleError(error);
 			}
 			const redirectWindow = window.open(result.link, '_blank');
-			redirectWindow.document.cookie = result.cookie;
 			toastr.success(result.message, 'Success');
 			redirectWindow.location;
 		});
@@ -352,11 +351,9 @@ Template.sidebarHeader.helpers({
 				status: 'online',
 			};
 		}
-		return id && Meteor.users.findOne(id, {
-			fields: {
-				username: 1, status: 1,
-			},
-		});
+		return id && Meteor.users.findOne(id, { fields: {
+			username: 1, status: 1,
+		} });
 	},
 	toolbarButtons() {
 		return toolbarButtons(Meteor.userId()).filter((button) => !button.condition || button.condition());
