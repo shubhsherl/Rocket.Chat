@@ -50,14 +50,14 @@ describe('[Administration]', () => {
 				admin.infoCommitTable.isVisible().should.be.true;
 			});
 
-			it('the first title should be Runtime Environment', () => {
-				admin.infoRuntimeTableTitle.moveToObject();
-				admin.infoRuntimeTableTitle.getText().should.equal('Runtime Environment');
-			});
+			// it('the first title should be Runtime Environment', () => {
+			// 	admin.infoRuntimeTableTitle.moveToObject();
+			// 	admin.infoRuntimeTableTitle.getText().should.equal('Runtime Environment');
+			// });
 
-			it('it should show the Runtime Environment table', () => {
-				admin.infoRuntimeTable.isVisible().should.be.true;
-			});
+			// it('it should show the Runtime Environment table', () => {
+			// 	admin.infoRuntimeTable.isVisible().should.be.true;
+			// });
 
 			it('the first title should be Build Environment', () => {
 				admin.infoBuildTableTitle.moveToObject();
