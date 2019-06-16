@@ -33,7 +33,7 @@ Meteor.startup(() => {
 		});
 
 		this.add('Articles_admin_panel', 'Articles_admin_panel', {
-			type: 'link',
+			type: 'action',
 			enableQuery: {
 				_id: 'Articles_enabled',
 				value: true,
