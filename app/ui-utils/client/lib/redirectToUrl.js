@@ -1,4 +1,4 @@
-//import { Meteor } from 'meteor/meteor';
+// import { Meteor } from 'meteor/meteor';
 import toastr from 'toastr';
 
 export const redirectToUrl = (url, options) => {
