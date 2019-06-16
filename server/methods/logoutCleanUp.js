@@ -5,10 +5,10 @@ import { ghostCleanUp } from '../../app/articles/server/logoutCleanUp';
 import { callbacks } from '../../app/callbacks';
 
 Meteor.methods({
-	logoutCleanUp(user, cookie = '') {
+	logoutCleanUp(user) {
 		check(user, Object);
 
-		ghostCleanUp(cookie);
+		ghostCleanUp('cookie');
 
 		Meteor.defer(function() {
 			callbacks.run('afterLogoutCleanUp', user);

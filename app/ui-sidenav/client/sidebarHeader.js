@@ -389,7 +389,7 @@ Template.sidebarHeader.events({
 										action: () => {
 											Meteor.logout(() => {
 												callbacks.run('afterLogoutCleanUp', user);
-												Meteor.call('logoutCleanUp', user, document.cookie);
+												Meteor.call('logoutCleanUp', user);
 												FlowRouter.go('home');
 												popover.close();
 											});
