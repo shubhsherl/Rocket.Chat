@@ -55,6 +55,7 @@ import '../app/otr/client';
 import '../app/push-notifications/client';
 import '../app/apps/client';
 import '../app/setup-wizard/client';
+import '../app/service-accounts/client';
 import '../app/slackbridge/client';
 import '../app/slashcommands-archiveroom/client';
 import '../app/slashcommand-asciiarts/client';
@@ -109,3 +110,6 @@ import '../app/action-links';
 import '../app/reactions/client';
 import '../app/livechat/client';
 import '../app/articles/client';
+import '../app/newsfeed/client';
+import '../app/follow/client';
+
