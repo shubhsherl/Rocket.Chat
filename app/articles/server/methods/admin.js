@@ -19,9 +19,9 @@ function setupGhost(user, token) {
 	const blogTitle = settings.get('Article_Site_title');
 	const blogToken = Random.id(17);
 	const announceToken = `${ blogToken }/${ Random.id(24) }`;
-	const collabToken = `${ blogToken }/${ Random.id(24) }`;
+	const settingsToken = `${ blogToken }/${ Random.id(24) }`;
 	settings.updateById('Announcement_Token', announceToken);
-	settings.updateById('Collaboration_Token', collabToken);
+	settings.updateById('Settings_Token', settingsToken);
 	const data = {
 		setup: [{
 			rc_url: rcUrl,
@@ -30,7 +30,7 @@ function setupGhost(user, token) {
 			name: user.name,
 			email: getVerifiedEmail(user.emails),
 			announce_token: announceToken,
-			collaboration_token: collabToken,
+			settings_token: settingsToken,
 			blogTitle,
 		}],
 	};

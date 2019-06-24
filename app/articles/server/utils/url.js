@@ -24,6 +24,10 @@ export class API {
 		return this.buildAPIUrl('session');
 	}
 
+	rhooks(token) {
+		return this.buildAPIUrl('rhooks', token);
+	}
+
 	invite() {
 		return this.buildAPIUrl('invitesetting');
 	}

@@ -42,7 +42,7 @@ Meteor.startup(() => {
 			public: true,
 		});
 
-		this.add('Collaboration_Token', 'collaboration_token', {
+		this.add('Settings_Token', 'articles_settings_token', {
 			type: 'string',
 			readonly: true,
 			enableQuery: {
