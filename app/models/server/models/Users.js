@@ -21,6 +21,7 @@ export class Users extends Base {
 		this.tryEnsureIndex({ type: 1 });
 		this.tryEnsureIndex({ 'visitorEmails.address': 1 });
 		this.tryEnsureIndex({ federation: 1 }, { sparse: true });
+		this.tryEnsureIndex({ 'u._id': 1 });
 	}
 
 	getLoginTokensByUserId(userId) {
@@ -518,6 +519,9 @@ export class Users extends Base {
 				{
 					username: { $exists: true, $nin: exceptions },
 				},
+				{
+					u: { $exists: false },
+				},
 				...extraQuery,
 			],
 		};
@@ -534,6 +538,9 @@ export class Users extends Base {
 					{ 'federation.peer': localPeer },
 				],
 			},
+			{
+				u: { $exists: false },
+			},
 		];
 		return this.findByActiveUsersExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery);
 	}
@@ -542,8 +549,70 @@ export class Users extends Base {
 		const extraQuery = [
 			{ federation: { $exists: true } },
 			{ 'federation.peer': { $ne: localPeer } },
+			{
+				u: { $exists: false },
+			},
 		];
 		return this.findByActiveUsersExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery);
+	}
+
+	findByActiveServiceAccountsExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery = []) {
+		if (exceptions == null) { exceptions = []; }
+		if (options == null) { options = {}; }
+		if (!_.isArray(exceptions)) {
+			exceptions = [exceptions];
+		}
+
+		const termRegex = new RegExp(s.escapeRegExp(searchTerm), 'i');
+		const searchFields = forcedSearchFields || settings.get('Service_Accounts_SearchFields').trim().split(',');
+		const orStmt = _.reduce(searchFields, function(acc, el) {
+			acc.push({ [el.trim()]: termRegex });
+			return acc;
+		}, []);
+
+		const query = {
+			$and: [
+				{
+					active: true,
+					$or: orStmt,
+				},
+				{
+					username: { $exists: true, $nin: exceptions },
+				},
+				{
+					u: { $exists: true },
+				},
+				...extraQuery,
+			],
+		};
+
+		return this._db.find(query, options);
+	}
+
+	findByActiveExternalServiceAccountsExcept(searchTerm, exceptions, options, forcedSearchFields, localPeer) {
+		const extraQuery = [
+			{ federation: { $exists: true } },
+			{ 'federation.peer': { $ne: localPeer } },
+			{
+				u: { $exists: true },
+			},
+		];
+		return this.findByActiveServiceAccountsExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery);
+	}
+
+	findByActiveLocalServiceAccountsExcept(searchTerm, exceptions, options, forcedSearchFields, localPeer) {
+		const extraQuery = [
+			{
+				$or: [
+					{ federation: { $exists: false } },
+					{ 'federation.peer': localPeer },
+				],
+			},
+			{
+				u: { $exists: true },
+			},
+		];
+		return this.findByActiveServiceAccountsExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery);
 	}
 
 	findUsersByNameOrUsername(nameOrUsername, options) {
@@ -664,6 +733,12 @@ export class Users extends Base {
 		};
 
 		return this.findOne(query, options);
+	}
+
+	findLinkedServiceAccounts(_id, options) {
+		const query = { 'u._id': _id };
+
+		return this.find(query, options);
 	}
 
 	// UPDATE
@@ -1055,6 +1130,17 @@ export class Users extends Base {
 				statusDefault,
 			},
 		});
+	}
+
+	setOwnerUsernameByUserId(userId, username) {
+		const query = { 'u._id': userId };
+		const update = {
+			$set: {
+				'u.username': username,
+			},
+		};
+
+		return this.update(query, update, { multi: true });
 	}
 
 	// INSERT
