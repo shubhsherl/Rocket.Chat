@@ -10,7 +10,7 @@ function addUser(user, accessToken) {
 	const data = {
 		user: [{
 			rc_username: user.username,
-			role: 'Author', // User can add itself as Author, even if he/she is admin in RC
+			role: 'Author', // User can add itself only as Author, even if he/she is admin in RC
 			rc_uid: user._id,
 			rc_token: accessToken,
 		}],
@@ -55,32 +55,29 @@ Meteor.methods({
 			throw new Meteor.Error('Articles are disabled');
 		}
 		const user = Meteor.users.findOne(Meteor.userId());
+		let errMsg = 'Ghost is not set up. Setup can be done from Admin Panel';
 
 		try {
-			let response = HTTP.call('GET', api.setup());
-			if (response.data && response.data.setup && response.data.setup[0]) {
-				if (response.data.setup[0].status) { // Ghost site is already setup
-					const exist = userExist(user, accessToken);
-					if (exist) {
-						return redirectGhost();
-					}
-					const inviteOnly = inviteSetting();
+			const response = HTTP.call('GET', api.setup());
 
-					if (!inviteOnly) {
-						response = addUser(user, accessToken);
-						if (response.statusCode === 200) {
-							return redirectGhost();
-						}
-						throw new Meteor.Error('Unable to setup your account.');
-					} else {
-						throw new Meteor.Error('You are not a member of Ghost. Ask admin to add');
-					}
-				} else { // Cannot setup Ghost from sidenav
-					throw new Meteor.Error('Ghost is not set up. Setup can be done from Admin Panel.');
+			if (response.data.setup[0].status) { // Ghost site is already setup
+				// user exist in ghost
+				if (userExist(user, accessToken)) {
+					return redirectGhost();
 				}
-			} else {
-				throw new Meteor.Error('Unable to redirect.');
+
+				const inviteOnly = inviteSetting();
+
+				// create user account in ghost
+				if (!inviteOnly && addUser(user, accessToken).statusCode === 200) {
+					return redirectGhost();
+				}
+
+				errMsg = inviteOnly ? 'You are not a member of Ghost. Ask admin to add' : 'Unable to setup your account';
 			}
+
+			// Cannot setup Ghost from sidenav
+			throw new Meteor.Error(errMsg);
 		} catch (e) {
 			throw new Meteor.Error(e.error || 'Unable to connect to Ghost.');
 		}
