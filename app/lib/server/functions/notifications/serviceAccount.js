@@ -2,7 +2,6 @@ import { metrics } from '../../../../metrics';
 import { Notifications } from '../../../../notifications';
 
 export function shouldNotifyServiceAccountOwner({
-	statusConnection,
 	hasMentionToAll,
 	hasMentionToHere,
 	isHighlighted,
@@ -10,9 +9,6 @@ export function shouldNotifyServiceAccountOwner({
 	hasReplyToThread,
 	roomType,
 }) {
-	if (statusConnection === 'online') {
-		return false;
-	}
 	return roomType === 'd' || hasMentionToAll || hasMentionToHere || isHighlighted || hasMentionToUser || hasReplyToThread;
 }
 

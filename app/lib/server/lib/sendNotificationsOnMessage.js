@@ -153,7 +153,6 @@ export const sendNotification = async ({
 	}
 
 	if (receiver.u && shouldNotifyServiceAccountOwner({
-		statusConnection: receiver.statusConnection,
 		hasMentionToAll,
 		hasMentionToHere,
 		isHighlighted,
