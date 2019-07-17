@@ -18,15 +18,14 @@ function addUser(user, accessToken) {
 	return HTTP.call('POST', api.createAccount(), { data, headers: { 'Content-Type': 'application/json' } });
 }
 
-function userExist(user, accessToken) {
+function userExist(id) {
 	const data = {
 		user: [{
-			rc_uid: user._id,
-			rc_token: accessToken,
+			rc_uid: id,
 		}],
 	};
 	const response = HTTP.call('GET', api.userExist(), { data, headers: { 'Content-Type': 'application/json' } });
-	return response.data && response.data.users[0] && response.data.users[0].exist;
+	return response.data;
 }
 
 function inviteSetting() {
@@ -47,6 +46,13 @@ function redirectGhost() {
 	};
 }
 
+function redirectUser(slug) {
+	return {
+		link: api.authorUrl(slug),
+		message: 'Redirecting.',
+	};
+}
+
 Meteor.methods({
 	redirectUserToArticles(accessToken) {
 		const enabled = settings.get('Articles_enabled');
@@ -61,9 +67,14 @@ Meteor.methods({
 			const response = HTTP.call('GET', api.setup());
 
 			if (response.data.setup[0].status) { // Ghost site is already setup
-				// user exist in ghost
-				if (userExist(user, accessToken)) {
+				const u = userExist(user._id).users[0];
+
+				if (u.exist && u.status === 'active') {
 					return redirectGhost();
+				}
+
+				if (u.exist) { // user exist but suspended
+					throw new Meteor.Error('You are suspended from Ghost');
 				}
 
 				const inviteOnly = inviteSetting();
@@ -80,6 +91,27 @@ Meteor.methods({
 			throw new Meteor.Error(errMsg);
 		} catch (e) {
 			throw new Meteor.Error(e.error || 'Unable to connect to Ghost.');
+		}
+	},
+
+	redirectToUsersArticles(_id) {
+		const enabled = settings.get('Articles_enabled');
+
+		if (!enabled) {
+			throw new Meteor.Error('Articles are disabled');
+		}
+		const errMsg = 'User is not a member of Ghost';
+
+		try {
+			const u = userExist(_id).users[0];
+
+			if (u.exist) {
+				return redirectUser(u.slug);
+			}
+
+			throw new Meteor.Error(errMsg);
+		} catch (e) {
+			throw new Meteor.Error(e.error || errMsg);
 		}
 	},
 });

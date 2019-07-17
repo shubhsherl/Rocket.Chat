@@ -1,18 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-import _ from 'underscore';
 import { Random } from 'meteor/random';
 
 import { API } from '../utils/url';
 import { settings } from '../../../settings';
 
 const api = new API();
-
-// Try to get a verified email, if available.
-function getVerifiedEmail(emails) {
-	const email = _.find(emails, (e) => e.verified);
-	return email || emails[0].address;
-}
 
 function setupGhost(user, token) {
 	const rcUrl = Meteor.absoluteUrl().replace(/\/$/, '');
@@ -27,8 +20,6 @@ function setupGhost(user, token) {
 			rc_url: rcUrl,
 			rc_id: user._id,
 			rc_token: token,
-			name: user.name,
-			email: getVerifiedEmail(user.emails),
 			announce_token: announceToken,
 			settings_token: settingsToken,
 			blogTitle,
