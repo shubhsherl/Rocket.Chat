@@ -11,6 +11,7 @@ import { sendEmail, shouldNotifyEmail } from '../functions/notifications/email';
 import { sendSinglePush, shouldNotifyMobile } from '../functions/notifications/mobile';
 import { notifyDesktopUser, shouldNotifyDesktop } from '../functions/notifications/desktop';
 import { notifyAudioUser, shouldNotifyAudio } from '../functions/notifications/audio';
+import { notifyServiceAccountOwner, shouldNotifyServiceAccountOwner } from '../functions/notifications/serviceAccount';
 
 export const sendNotification = async ({
 	subscription,
@@ -46,6 +47,7 @@ export const sendNotification = async ({
 					status: 1,
 					statusConnection: 1,
 					username: 1,
+					u: 1,
 				},
 			}),
 		];
@@ -149,6 +151,18 @@ export const sendNotification = async ({
 			return false;
 		});
 	}
+
+	if (receiver.u && shouldNotifyServiceAccountOwner({
+		statusConnection: receiver.statusConnection,
+		hasMentionToAll,
+		hasMentionToHere,
+		isHighlighted,
+		hasMentionToUser,
+		hasReplyToThread,
+		roomType,
+	})) {
+		notifyServiceAccountOwner(receiver, receiver.u._id, message, room);
+	}
 };
 
 const project = {
@@ -168,6 +182,7 @@ const project = {
 		'receiver.status': 1,
 		'receiver.statusConnection': 1,
 		'receiver.username': 1,
+		'receiver.u': 1,
 	},
 };
 

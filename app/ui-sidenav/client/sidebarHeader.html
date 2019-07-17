@@ -7,8 +7,14 @@
 			</div>
 			<div class="sidebar__toolbar">
 				{{#each toolbarButtons}}
-					<button class="sidebar__toolbar-button rc-tooltip rc-tooltip--down js-button" aria-label="{{name}}">
-						{{> icon block="sidebar__toolbar-button-icon" icon=icon }}
+					<button class=" sidebar__toolbar-button  rc-tooltip rc-tooltip--down js-button" aria-label="{{name}}">
+						{{#if active}} 
+							<span class="service-account-notification">
+								{{> icon block="sidebar__toolbar-button-icon" icon=icon }}
+							</span>
+						{{else}}
+							{{> icon block="sidebar__toolbar-button-icon" icon=icon }}
+						{{/if}}
 					</button>
 				{{/each}}
 			</div>

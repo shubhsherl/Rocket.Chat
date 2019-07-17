@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
+import { Session } from 'meteor/session';
 
 import { handleError } from '../../../utils';
 import './serviceAccountSidebarLogin.html';
@@ -21,6 +22,12 @@ Template.serviceAccountSidebarLogin.helpers({
 	},
 	showOwnerAccountLink() {
 		return localStorage.getItem('serviceAccountForceLogin') && !!Meteor.user().u;
+	},
+	receivedNewMessage(username) {
+		if (Template.instance().notifiedServiceAccount) {
+			return username === Template.instance().notifiedServiceAccount.get();
+		}
+		return false;
 	},
 });
 
@@ -56,6 +63,10 @@ Template.serviceAccountSidebarLogin.onCreated(function() {
 	this.ready = new ReactiveVar(true);
 	this.users = new ReactiveVar([]);
 	this.loading = new ReactiveVar(true);
+	this.notifiedServiceAccount = new ReactiveVar('');
+	instance.notifiedServiceAccount.set(Session.get('saMessageReceiver'));
+	Session.delete('saMessageReceiver');
+	Session.delete('saNotification');
 	this.autorun(() => {
 		instance.loading.set(true);
 		Meteor.call('getLinkedServiceAccounts', function(err, serviceAccounts) {
