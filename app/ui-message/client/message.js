@@ -428,6 +428,17 @@ Template.message.helpers({
 		const { msg: { threadMsg } } = this;
 		return threadMsg;
 	},
+	isNewsfeed() {
+		const { room } = this;
+		if (room.t === 'n') {
+			return true;
+		}
+		return false;
+	},
+	originalRoomNameForNewsfeed() {
+		const { msg } = this;
+		return msg.rid;
+	},
 });
 
 
@@ -509,7 +520,7 @@ const isNewDay = (currentNode, previousNode, forceDate, showDateSeparator) => {
 	return false;
 };
 
-const isSequential = (currentNode, previousNode, forceDate, period, showDateSeparator, shouldCollapseReplies) => {
+const isSequential = (currentNode, previousNode, forceDate, period, showDateSeparator, shouldCollapseReplies, room) => {
 	if (!previousNode) {
 		return false;
 	}
@@ -522,6 +533,15 @@ const isSequential = (currentNode, previousNode, forceDate, period, showDateSepa
 	const { dataset: previousDataset } = previousNode;
 	const previousMessageDate = new Date(parseInt(previousDataset.timestamp));
 	const currentMessageDate = new Date(parseInt(currentDataset.timestamp));
+	const previousOriginalChannel = previousDataset.originalchannel;
+	const currentOriginalChannel = currentDataset.originalchannel;
+
+
+	if (room.t === 'n') {
+		if (previousOriginalChannel !== currentOriginalChannel) {
+			return false;
+		}
+	}
 
 	if (showDateSeparator && previousMessageDate.toDateString() !== currentMessageDate.toDateString()) {
 		return false;
@@ -554,7 +574,7 @@ const isSequential = (currentNode, previousNode, forceDate, period, showDateSepa
 	return false;
 };
 
-const processSequentials = ({ currentNode, settings, forceDate, showDateSeparator = true, groupable, msg, shouldCollapseReplies }) => {
+const processSequentials = ({ currentNode, settings, forceDate, showDateSeparator = true, groupable, msg, shouldCollapseReplies, room }) => {
 	if (!showDateSeparator && !groupable) {
 		return;
 	}
@@ -565,7 +585,7 @@ const processSequentials = ({ currentNode, settings, forceDate, showDateSeparato
 	const previousNode = getPreviousSentMessage(currentNode);
 	const nextNode = currentNode.nextElementSibling;
 
-	if (isSequential(currentNode, previousNode, forceDate, settings.Message_GroupingPeriod, showDateSeparator, shouldCollapseReplies)) {
+	if (isSequential(currentNode, previousNode, forceDate, settings.Message_GroupingPeriod, showDateSeparator, shouldCollapseReplies, room)) {
 		currentNode.classList.add('sequential');
 	} else {
 		currentNode.classList.remove('sequential');
@@ -578,7 +598,7 @@ const processSequentials = ({ currentNode, settings, forceDate, showDateSeparato
 	}
 
 	if (nextNode && nextNode.dataset) {
-		if (isSequential(nextNode, currentNode, forceDate, settings.Message_GroupingPeriod, showDateSeparator, shouldCollapseReplies)) {
+		if (isSequential(nextNode, currentNode, forceDate, settings.Message_GroupingPeriod, showDateSeparator, shouldCollapseReplies, room)) {
 			nextNode.classList.add('sequential');
 		} else {
 			nextNode.classList.remove('sequential');

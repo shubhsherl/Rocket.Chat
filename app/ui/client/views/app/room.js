@@ -288,7 +288,14 @@ Template.room.helpers({
 				ts: 1,
 			},
 		};
-
+		if (Template.instance().room.t === 'n') {
+			const query = {
+				$or: Template.instance().followingUsers.get(),
+				_hidden: { $ne: true },
+				...(ignoreReplies || modes[viewMode] === 'compact') && { tmid: { $exists: 0 } },
+			};
+			return ChatMessage.find(query, options);
+		}
 		return ChatMessage.find(query, options);
 	},
 
@@ -1091,7 +1098,21 @@ Template.room.onCreated(function() {
 			ChatMessage.update({ rid: this.data._id, 'u._id': role.u._id }, { $pull: { roles: role._id } }, { multi: true });
 		},
 	});
+	this.followingUsers = new ReactiveVar();
 
+	if (this.room.t === 'n') {
+		Meteor.call('getFollowing', Meteor.user().name, (err, res) => {
+			if (res.length === 0) {
+				return [];
+			}
+			const following = [];
+			res.forEach((fObject) => {
+				delete Object.assign(fObject, { 'u._id': fObject.following }).following;
+				following.push(fObject);
+			});
+			this.followingUsers.set(following);
+		});
+	}
 	this.sendToBottomIfNecessary = () => {};
 }); // Update message to re-render DOM
 

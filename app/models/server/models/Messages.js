@@ -5,6 +5,8 @@ import { Base } from './_Base';
 import Rooms from './Rooms';
 import { settings } from '../../../settings/server/functions/settings';
 import { FileUpload } from '../../../file-upload/server/lib/FileUpload';
+import { canAccessRoom } from '../../../authorization/server';
+import Users from './Users';
 
 export class Messages extends Base {
 	constructor() {
@@ -247,6 +249,46 @@ export class Messages extends Base {
 		return this.find(query, options);
 	}
 
+	findVisibleByFollowingNotContainingTypes(userId, following, types, options) {
+		let query = {
+			_hidden: {
+				$ne: true,
+			},
+
+			$or: following,
+		};
+
+		if (Match.test(types, [String]) && (types.length > 0)) {
+			query.t =			{ $nin: types };
+		}
+		const listOfRooms = _.uniq(this.find(query, { sort: { rid: 1 }, fields: { rid: true, _id: false } })
+			.fetch().map(function(x) {
+				return x.rid;
+			}), true);
+
+		const listOfAccessibleRooms = listOfRooms.filter((rid) => {
+			const room = Rooms.findOneById(rid);
+			const user = Users.findById(userId).fetch()[0];
+			return canAccessRoom(room, user);
+		});
+
+		const listOfAccessibleRoomsObject = listOfAccessibleRooms.map((rid) => ({ rid }));
+
+		query = {
+			_hidden: {
+				$ne: true,
+			},
+			$and: [
+				{ $or: following },
+				{ $or: listOfAccessibleRoomsObject },
+			],
+		};
+		if (Match.test(types, [String]) && (types.length > 0)) {
+			query.t =			{ $nin: types };
+		}
+		return this.find(query, options);
+	}
+
 	findInvisibleByRoomId(roomId, options) {
 		const query = {
 			_hidden: true,
@@ -359,6 +401,53 @@ export class Messages extends Base {
 		return this.find(query, options);
 	}
 
+	findVisibleByFollowingBeforeTimestampNotContainingTypes(userId, following, timestamp, types, options) {
+		let query = {
+			_hidden: {
+				$ne: true,
+			},
+			$or: following,
+			ts: {
+				$lt: timestamp,
+			},
+		};
+
+		if (Match.test(types, [String]) && (types.length > 0)) {
+			query.t =			{ $nin: types };
+		}
+
+		const listOfRooms = _.uniq(this.find(query, { sort: { rid: 1 }, fields: { rid: true, _id: false } })
+			.fetch().map(function(x) {
+				return x.rid;
+			}), true);
+
+		const listOfAccessibleRooms = listOfRooms.filter((rid) => {
+			const room = Rooms.findOneById(rid);
+			const user = Users.findById(userId).fetch()[0];
+			return canAccessRoom(room, user);
+		});
+
+		const listOfAccessibleRoomsObject = listOfAccessibleRooms.map((rid) => ({ rid }));
+
+		query = {
+			_hidden: {
+				$ne: true,
+			},
+			$and: [
+				{ $or: following },
+				{ $or: listOfAccessibleRoomsObject },
+			],
+			ts: {
+				$lt: timestamp,
+			},
+		};
+		if (Match.test(types, [String]) && (types.length > 0)) {
+			query.t =			{ $nin: types };
+		}
+
+		return this.find(query, options);
+	}
+
 	findVisibleByRoomIdBetweenTimestampsNotContainingTypes(roomId, afterTimestamp, beforeTimestamp, types, options) {
 		const query = {
 			_hidden: {
@@ -375,6 +464,53 @@ export class Messages extends Base {
 			query.t =			{ $nin: types };
 		}
 
+		return this.find(query, options);
+	}
+
+	findVisibleByFollowingBetweenTimestampsNotContainingTypes(userId, following, afterTimestamp, beforeTimestamp, types, options) {
+		let query = {
+			_hidden: {
+				$ne: true,
+			},
+			$or: following,
+			ts: {
+				$gt: afterTimestamp,
+				$lt: beforeTimestamp,
+			},
+		};
+
+		if (Match.test(types, [String]) && (types.length > 0)) {
+			query.t =			{ $nin: types };
+		}
+		const listOfRooms = _.uniq(this.find(query, { sort: { rid: 1 }, fields: { rid: true, _id: false } })
+			.fetch().map(function(x) {
+				return x.rid;
+			}), true);
+
+		const listOfAccessibleRooms = listOfRooms.filter((rid) => {
+			const room = Rooms.findOneById(rid);
+			const user = Users.findById(userId).fetch()[0];
+			return canAccessRoom(room, user);
+		});
+
+		const listOfAccessibleRoomsObject = listOfAccessibleRooms.map((rid) => ({ rid }));
+
+		query = {
+			_hidden: {
+				$ne: true,
+			},
+			$and: [
+				{ $or: following },
+				{ $or: listOfAccessibleRoomsObject },
+			],
+			ts: {
+				$gt: afterTimestamp,
+				$lt: beforeTimestamp,
+			},
+		};
+		if (Match.test(types, [String]) && (types.length > 0)) {
+			query.t =			{ $nin: types };
+		}
 		return this.find(query, options);
 	}
 
