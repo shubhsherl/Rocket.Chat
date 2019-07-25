@@ -218,6 +218,22 @@ const toolbarButtons = (user) => [{
 	},
 },
 {
+	name: t('Articles'),
+	icon: 'articles',
+	condition: () => settings.get('Articles_Enabled'),
+	action: () => {
+		const loginToken = localStorage.getItem('Meteor.loginToken');
+
+		Meteor.call('redirectUserToArticles', loginToken, (error, result) => {
+			if (error) {
+				return handleError(error);
+			}
+			const redirectWindow = window.open(result.link, '_blank');
+			redirectWindow.location;
+		});
+	},
+},
+{
 	name: t('Options'),
 	icon: 'menu',
 	condition: () => AccountBox.getItems().length || hasAtLeastOnePermission(['manage-emoji', 'manage-integrations', 'manage-oauth-apps', 'manage-own-integrations', 'manage-sounds', 'view-logs', 'view-privileged-setting', 'view-room-administration', 'view-statistics', 'view-user-administration']),
@@ -371,7 +387,7 @@ Template.sidebarHeader.events({
 										action: () => {
 											Meteor.logout(() => {
 												callbacks.run('afterLogoutCleanUp', user);
-												Meteor.call('logoutCleanUp', user);
+												Meteor.call('logoutCleanUp', user, document.cookie);
 												FlowRouter.go('home');
 												popover.close();
 											});
