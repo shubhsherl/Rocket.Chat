@@ -1,87 +1,47 @@
 import { Meteor } from 'meteor/meteor';
-import { HTTP } from 'meteor/http';
 
-import { API } from '../utils/url';
+import { ghostAPI } from '../utils/ghostAPI';
 import { settings } from '../../../settings';
 
-const api = new API();
-
-function addUser(user, accessToken) {
-	const data = {
-		user: [{
-			rc_username: user.username,
-			role: 'Author', // User can add itself only as Author, even if he/she is admin in RC
-			rc_uid: user._id,
-			rc_token: accessToken,
-		}],
-	};
-	return HTTP.call('POST', api.createAccount(), { data, headers: { 'Content-Type': 'application/json' } });
-}
-
-function userExist(id) {
-	const data = {
-		user: [{
-			rc_uid: id,
-		}],
-	};
-	const response = HTTP.call('GET', api.userExist(), { data, headers: { 'Content-Type': 'application/json' } });
-	return response.data;
-}
-
-function inviteSetting() {
-	const response = HTTP.call('GET', api.invite());
-	const { settings } = response.data;
-
-	if (settings && settings[0] && settings[0].key === 'invite_only') {
-		return settings[0].value;
-	}
-	// default value in Ghost
-	return false;
-}
-
-function redirectGhost() {
-	return {
-		link: api.siteUrl(),
-		message: 'Ghost is Set up. Redirecting.',
-	};
-}
-
-function redirectUser(slug) {
-	return {
-		link: api.authorUrl(slug),
-		message: 'Redirecting.',
-	};
-}
-
 Meteor.methods({
-	redirectUserToArticles(accessToken) {
-		const enabled = settings.get('Articles_enabled');
+	redirectUserToArticles(loginToken) {
+		if (!Meteor.userId()) {
+			throw new Meteor.Error('error-invalid-user', 'Invalid user', {
+				method: 'redirectUserToArticles',
+			});
+		}
+
+		const enabled = settings.get('Articles_Enabled');
 
 		if (!enabled) {
-			throw new Meteor.Error('Articles are disabled');
+			throw new Meteor.Error('error-articles-disabled', 'Articles are disabled', {
+				method: 'redirectUserToArticles',
+			});
 		}
-		const user = Meteor.users.findOne(Meteor.userId());
+
 		let errMsg = 'Ghost is not set up. Setup can be done from Admin Panel';
 
 		try {
-			const response = HTTP.call('GET', api.setup());
+			const response = ghostAPI.isSetup();
 
 			if (response.data.setup[0].status) { // Ghost site is already setup
-				const u = userExist(user._id).users[0];
+				const u = ghostAPI.userExistInGhost(Meteor.userId()).users[0];
 
 				if (u.exist && u.status === 'active') {
-					return redirectGhost();
+					return ghostAPI.redirectToGhostLink;
 				}
 
 				if (u.exist) { // user exist but suspended
-					throw new Meteor.Error('You are suspended from Ghost');
+					throw new Meteor.Error('error-articles-user-suspended', 'You are suspended from Ghost', {
+						method: 'redirectUserToArticles',
+					});
 				}
 
-				const inviteOnly = inviteSetting();
+				const inviteOnly = ghostAPI.inviteSettingInGhost();
 
 				// create user account in ghost
-				if (!inviteOnly && addUser(user, accessToken).statusCode === 200) {
-					return redirectGhost();
+				if (!inviteOnly && ghostAPI.createUserAccount(loginToken).statusCode === 200) {
+					return ghostAPI.redirectToGhostLink;
 				}
 
 				errMsg = inviteOnly ? 'You are not a member of Ghost. Ask admin to add' : 'Unable to setup your account';
@@ -95,18 +55,20 @@ Meteor.methods({
 	},
 
 	redirectToUsersArticles(_id) {
-		const enabled = settings.get('Articles_enabled');
+		const enabled = settings.get('Articles_Enabled');
 
 		if (!enabled) {
-			throw new Meteor.Error('Articles are disabled');
+			throw new Meteor.Error('error-articles-disabled', 'Articles are disabled', {
+				method: 'redirectToUsersArticles',
+			});
 		}
 		const errMsg = 'User is not a member of Ghost';
 
 		try {
-			const u = userExist(_id).users[0];
+			const response = ghostAPI.userExistInGhost(_id).users[0];
 
-			if (u.exist) {
-				return redirectUser(u.slug);
+			if (response.exist) {
+				return ghostAPI.redirectToPublicLink(response.slug);
 			}
 
 			throw new Meteor.Error(errMsg);

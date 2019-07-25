@@ -588,8 +588,6 @@ Template.admin.events({
 				const redirectWindow = window.open(data.link, '_blank');
 				redirectWindow.location;
 			}
-			const args = [data.message].concat(data.params);
-			toastr.success(TAPi18n.__.apply(TAPi18n, args), TAPi18n.__('Success'));
 		});
 	},
 	'click .button-fullscreen'() {

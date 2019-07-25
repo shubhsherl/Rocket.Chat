@@ -6,6 +6,7 @@ import { Users, Subscriptions, Messages, Rooms, Integrations, FederationPeers } 
 import { hasRole, getUsersInRole } from '../../../authorization';
 import { settings } from '../../../settings';
 import { Notifications } from '../../../notifications';
+import { callbacks } from '../../../callbacks';
 
 export const deleteUser = function(userId) {
 	const user = Users.findOneById(userId, {
@@ -97,6 +98,7 @@ export const deleteUser = function(userId) {
 	}
 
 	Users.removeById(userId); // Remove user from users database
+	callbacks.run('afterDeleteUser', { _id: userId });
 
 	// Refresh the peers list
 	FederationPeers.refreshPeers();

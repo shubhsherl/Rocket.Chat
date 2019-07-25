@@ -2,33 +2,31 @@ import { Meteor } from 'meteor/meteor';
 
 import { settings } from '../../settings';
 
-const defaults = {
-	enable: false,
-};
-
 Meteor.startup(() => {
 	settings.addGroup('Articles', function() {
-		this.add('Articles_enabled', defaults.enable, {
+		this.add('Articles_Enabled', false, {
 			type: 'boolean',
 			i18nLabel: 'Enable',
 			public: true,
 		});
 
-		this.add('Article_Site_title', 'Rocket.Chat', {
+		this.add('Article_Site_Title', 'Rocket.Chat', {
 			type: 'string',
 			enableQuery: {
-				_id: 'Articles_enabled',
+				_id: 'Articles_Enabled',
 				value: true,
 			},
+			i18nLabel: 'Article_Site_Title',
 			public: true,
 		});
 
 		this.add('Article_Site_Url', 'http://localhost:2368', {
 			type: 'string',
 			enableQuery: {
-				_id: 'Articles_enabled',
+				_id: 'Articles_Enabled',
 				value: true,
 			},
+			i18nLabel: 'Article_Site_Url',
 			public: true,
 		});
 
@@ -36,9 +34,10 @@ Meteor.startup(() => {
 			type: 'string',
 			readonly: true,
 			enableQuery: {
-				_id: 'Articles_enabled',
+				_id: 'Articles_Enabled',
 				value: true,
 			},
+			i18nLabel: 'Announcement_Token',
 			public: true,
 		});
 
@@ -46,19 +45,22 @@ Meteor.startup(() => {
 			type: 'string',
 			readonly: true,
 			enableQuery: {
-				_id: 'Articles_enabled',
+				_id: 'Articles_Enabled',
 				value: true,
 			},
+			i18nLabel: 'Settings_Token',
 			public: true,
 		});
 
-		this.add('Articles_admin_panel', 'Articles_admin_panel', {
+		this.add('Articles_Admin_Panel', 'articlesAdminPanel', {
 			type: 'link',
 			enableQuery: {
-				_id: 'Articles_enabled',
+				_id: 'Articles_Enabled',
 				value: true,
 			},
 			linkText: 'Article_Admin_Panel',
+			i18nLabel: 'Article_Admin_Panel',
+			i18nDescription: 'Article_Admin_Panel_Description',
 		});
 	});
 });

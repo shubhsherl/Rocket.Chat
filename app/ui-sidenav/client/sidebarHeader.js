@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Template } from 'meteor/templating';
-import toastr from 'toastr';
 import { Session } from 'meteor/session';
 
 import { popover, AccountBox, menu, SideNav, modal } from '../../ui-utils';
@@ -264,7 +263,7 @@ const toolbarButtons = (user) => [{
 {
 	name: t('Articles'),
 	icon: 'articles',
-	condition: () => settings.get('Articles_enabled'),
+	condition: () => settings.get('Articles_Enabled'),
 	action: () => {
 		const loginToken = localStorage.getItem('Meteor.loginToken');
 
@@ -273,7 +272,6 @@ const toolbarButtons = (user) => [{
 				return handleError(error);
 			}
 			const redirectWindow = window.open(result.link, '_blank');
-			toastr.success(result.message, 'Success');
 			redirectWindow.location;
 		});
 	},

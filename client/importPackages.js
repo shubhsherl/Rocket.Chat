@@ -112,5 +112,3 @@ import '../app/reactions/client';
 import '../app/livechat/client';
 import '../app/newsfeed/client';
 import '../app/follow/client';
-import '../app/articles/client';
-

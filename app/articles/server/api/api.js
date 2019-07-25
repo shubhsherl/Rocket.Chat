@@ -30,10 +30,9 @@ const Api = new Restivus({
 			}
 
 			this.announceToken = settings.get('Announcement_Token');
-			const { blogId } = this.request.params;
 			const token = decodeURIComponent(this.request.params.token);
 
-			if (this.announceToken !== `${ blogId }/${ token }`) {
+			if (this.announceToken !== token) {
 				return {
 					error: {
 						statusCode: 404,
@@ -90,7 +89,7 @@ function executefetchUserRest() {
 	}
 }
 
-Api.addRoute(':blogId/:token', { authRequired: true }, {
+Api.addRoute(':token', { authRequired: true }, {
 	post: executeAnnouncementRest,
 	get: executeAnnouncementRest,
 });
@@ -98,7 +97,7 @@ Api.addRoute(':blogId/:token', { authRequired: true }, {
 // If a user is editor/admin in Ghost but is not an admin in RC,
 // then the e-mail will not be provided to that user
 // This method will allow user to fetch user with email.
-Api.addRoute(':blogId/:token/getUser', { authRequired: true }, {
+Api.addRoute(':token/getUser', { authRequired: true }, {
 	post: executefetchUserRest,
 	get: executefetchUserRest,
 });

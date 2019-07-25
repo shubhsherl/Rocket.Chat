@@ -28,9 +28,10 @@ export const fileUploadHandler = (directive, meta, file) => {
 Tracker.autorun(function() {
 	if (Meteor.userId()) {
 		let domain = Meteor.absoluteUrl().replace(/.*\/\//, '');
-		domain = domain.replace(/:.*\/$/, '');
+		domain = domain.replace(/:.*$/, '');
 		domain = domain.replace(/\/$/, '');
 		domain = `.${ domain }`;
+
 		document.cookie = `rc_uid=${ escape(Meteor.userId()) }; domain=${ domain }; path=/`;
 		document.cookie = `rc_token=${ escape(Accounts._storedLoginToken()) }; domain=${ domain }; path=/`;
 	}

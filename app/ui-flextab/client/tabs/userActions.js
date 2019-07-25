@@ -133,12 +133,11 @@ export const getActions = ({ user, directActions, hideAdminControls }) => {
 						return handleError(error);
 					}
 					const redirectWindow = window.open(result.link, '_blank');
-					toastr.success(result.message, 'Success');
 					redirectWindow.location;
 				})
 			),
 			condition() {
-				return settings.get('Articles_enabled');
+				return settings.get('Articles_Enabled');
 			},
 		},
 
