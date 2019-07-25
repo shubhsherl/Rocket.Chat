@@ -1,16 +1,10 @@
-import { Meteor } from 'meteor/meteor';
-import { HTTP } from 'meteor/http';
-
 import { settings } from '../../settings';
-import { API } from './utils/url';
-
-const api = new API();
+import { ghostAPI } from './utils/ghostAPI';
 
 export function ghostCleanUp(cookie) {
-	const rcUrl = Meteor.absoluteUrl().replace(/\/$/, '');
 	try {
-		if (settings.get('Articles_enabled')) {
-			HTTP.call('DELETE', api.session(), { headers: { cookie, referer: rcUrl } });
+		if (settings.get('Articles_Enabled')) {
+			ghostAPI.deleteSesseion(cookie);
 		}
 	} catch (e) {
 		// Do nothing if failed to logout from Ghost.
