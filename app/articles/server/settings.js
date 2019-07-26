@@ -32,7 +32,6 @@ Meteor.startup(() => {
 
 		this.add('Announcement_Token', 'announcement_token', {
 			type: 'string',
-			readonly: true,
 			enableQuery: {
 				_id: 'Articles_Enabled',
 				value: true,
@@ -43,7 +42,6 @@ Meteor.startup(() => {
 
 		this.add('Settings_Token', 'articles_settings_token', {
 			type: 'string',
-			readonly: true,
 			enableQuery: {
 				_id: 'Articles_Enabled',
 				value: true,

@@ -25,7 +25,7 @@ Meteor.methods({
 			let response = ghostAPI.isSetup();
 
 			if (response.data.setup[0].status) { // Ghost site is already setup
-				return ghostAPI.redirectToGhostLink;
+				return ghostAPI.redirectToGhostLink();
 			}
 
 			if (!hasPermission(Meteor.userId(), 'setup-ghost')) {
@@ -40,7 +40,7 @@ Meteor.methods({
 			errMsg = 'Unable to setup. Make sure Ghost is running';
 
 			if (response.statusCode === 201 && response.content) {
-				return ghostAPI.redirectToGhostLink;
+				return ghostAPI.redirectToGhostLink();
 			}
 
 			throw new Meteor.Error(errMsg);
