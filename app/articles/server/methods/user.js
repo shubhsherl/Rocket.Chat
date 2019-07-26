@@ -28,7 +28,7 @@ Meteor.methods({
 				const u = ghostAPI.userExistInGhost(Meteor.userId()).users[0];
 
 				if (u.exist && u.status === 'active') {
-					return ghostAPI.redirectToGhostLink;
+					return ghostAPI.redirectToGhostLink();
 				}
 
 				if (u.exist) { // user exist but suspended
@@ -41,7 +41,7 @@ Meteor.methods({
 
 				// create user account in ghost
 				if (!inviteOnly && ghostAPI.createUserAccount(loginToken).statusCode === 200) {
-					return ghostAPI.redirectToGhostLink;
+					return ghostAPI.redirectToGhostLink();
 				}
 
 				errMsg = inviteOnly ? 'You are not a member of Ghost. Ask admin to add' : 'Unable to setup your account';

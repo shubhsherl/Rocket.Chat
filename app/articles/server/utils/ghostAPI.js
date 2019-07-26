@@ -4,37 +4,38 @@ import { Random } from 'meteor/random';
 
 import { settings } from '../../../settings';
 
+const ADMIN_API = '/ghost/api/v2/admin';
+
+const _baseUrl = function() {
+	let url = settings.get('Article_Site_Url');
+	if (url) {
+		url = url.replace(/\/$/, '');
+	}
+	return url;
+};
+
+const buildUrl = function(type, subtype = '') {
+	const dir = `/${ type }/${ subtype }`;
+	return _baseUrl() + ADMIN_API + dir;
+};
+
 export const ghostAPI = new class {
-	constructor() {
-		this._getBaseUrl = settings.get('Article_Site_Url').replace(/\/$/, '');
-		this.adminApi = '/ghost/api/v2/admin';
-		this.rhooks = this.buildAPIUrl('rhooks', settings.get('Settings_Token'));
-		this.setupUrl = this.buildAPIUrl('authentication', 'setup');
-		this.sessionUrl = this.buildAPIUrl('session');
-		this.inviteUrl = this.buildAPIUrl('invitesetting');
-		this.createUserAccountUrl = this.buildAPIUrl('authentication', 'adduser');
-		this.userExistUrl = this.buildAPIUrl('userexist');
-		this.siteUrl = `${ this._getBaseUrl }/ghost`;
-		this.redirectToGhostLink = { link: this.siteUrl };
-	}
-
-	buildAPIUrl(type, subtype = '') {
-		const dir = `/${ type }/${ subtype }`;
-		return this._getBaseUrl + this.adminApi + dir;
-	}
-
 	authorUrl(slug) {
-		return `${ this._getBaseUrl }/author/${ slug }`;
+		return `${ _baseUrl() }/author/${ slug }`;
 	}
 
 	isSetup() {
-		return HTTP.call('GET', this.setupUrl);
+		return HTTP.call('GET', buildUrl('authentication', 'setup'));
 	}
 
 	redirectToPublicLink(slug) {
 		return {
 			link: this.authorUrl(slug),
 		};
+	}
+
+	redirectToGhostLink() {
+		return { link: `${ _baseUrl() }/ghost` };
 	}
 
 	setupGhost(loginToken) {
@@ -54,7 +55,7 @@ export const ghostAPI = new class {
 				blogTitle,
 			}],
 		};
-		return HTTP.call('POST', this.setupUrl, { data, headers: { 'Content-Type': 'application/json' } });
+		return HTTP.call('POST', buildUrl('authentication', 'setup'), { data, headers: { 'Content-Type': 'application/json' } });
 	}
 
 	createUserAccount(loginToken) {
@@ -67,7 +68,7 @@ export const ghostAPI = new class {
 				rc_token: loginToken,
 			}],
 		};
-		return HTTP.call('POST', this.createUserAccountUrl, { data, headers: { 'Content-Type': 'application/json' } });
+		return HTTP.call('POST', buildUrl('authentication', 'adduser'), { data, headers: { 'Content-Type': 'application/json' } });
 	}
 
 	userExistInGhost(_id) {
@@ -76,12 +77,12 @@ export const ghostAPI = new class {
 				rc_uid: _id,
 			}],
 		};
-		const response = HTTP.call('GET', this.userExistUrl, { data, headers: { 'Content-Type': 'application/json' } });
+		const response = HTTP.call('GET', buildUrl('userexist'), { data, headers: { 'Content-Type': 'application/json' } });
 		return response.data;
 	}
 
 	inviteSettingInGhost() {
-		const response = HTTP.call('GET', this.inviteUrl);
+		const response = HTTP.call('GET', buildUrl('invitesetting'));
 		const { settings } = response.data;
 
 		if (settings && settings[0] && settings[0].key === 'invite_only') {
@@ -101,7 +102,7 @@ export const ghostAPI = new class {
 		const opts = {
 			params: {},
 			method: 'POST',
-			url: this.rhooks,
+			url: buildUrl('rhooks', settings.get('Settings_Token')),
 			data,
 			auth: undefined,
 			npmRequestOptions: {
@@ -134,6 +135,6 @@ export const ghostAPI = new class {
 
 	deleteSesseion(cookie) {
 		const rcUrl = Meteor.absoluteUrl().replace(/\/$/, '');
-		HTTP.call('DELETE', this.sessionUrl, { headers: { cookie, referer: rcUrl } });
+		HTTP.call('DELETE', buildUrl('session'), { headers: { cookie, referer: rcUrl } });
 	}
 }();
