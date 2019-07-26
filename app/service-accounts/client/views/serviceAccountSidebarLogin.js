@@ -1,11 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Template } from 'meteor/templating';
-import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Session } from 'meteor/session';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 
 import { handleError } from '../../../utils';
+import { callbacks } from '../../../callbacks';
 import './serviceAccountSidebarLogin.html';
+import { popover } from '../../../ui-utils/client';
 
 Template.serviceAccountSidebarLogin.helpers({
 	loading() {
@@ -18,10 +20,10 @@ Template.serviceAccountSidebarLogin.helpers({
 		return Template.instance().users.get() && Template.instance().users.get().length > 0;
 	},
 	owner() {
-		return Meteor.user().u;
+		return Meteor.user() && Meteor.user().u;
 	},
 	showOwnerAccountLink() {
-		return localStorage.getItem('serviceAccountForceLogin') && !!Meteor.user().u;
+		return localStorage.getItem('serviceAccountForceLogin') && Meteor.user() && !!Meteor.user().u;
 	},
 	receivedNewMessage(username) {
 		if (Template.instance().notifiedServiceAccount) {
@@ -35,24 +37,29 @@ Template.serviceAccountSidebarLogin.events({
 	'click .js-login'(e) {
 		e.preventDefault();
 		let { username } = this;
-		if (Meteor.user().u) {
+		if (Meteor.user() && Meteor.user().u) {
 			username = Meteor.user().u.username;
 		}
 		Meteor.call('getLoginToken', username, function(error, token) {
 			if (error) {
 				return handleError(error);
 			}
-			FlowRouter.go('/home');
-			Meteor.loginWithToken(token.token, (err) => {
-				if (err) {
-					return handleError(err);
-				}
-				document.location.reload(true);
-				if (Meteor.user().u) {
-					localStorage.setItem('serviceAccountForceLogin', true);
-				} else {
-					localStorage.removeItem('serviceAccountForceLogin');
-				}
+			if (Meteor.user() && !Meteor.user().u) {
+				localStorage.setItem('serviceAccountForceLogin', true);
+			} else {
+				localStorage.removeItem('serviceAccountForceLogin');
+			}
+			const user = Meteor.user();
+			Meteor.logout(() => {
+				callbacks.run('afterLogoutCleanUp', user);
+				Meteor.call('logoutCleanUp', user, document.cookie);
+				FlowRouter.go('home');
+				popover.close();
+				Meteor.loginWithToken(token.token, (err) => {
+					if (err) {
+						return handleError(err);
+					}
+				});
 			});
 		});
 	},
