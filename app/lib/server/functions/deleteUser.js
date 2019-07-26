@@ -7,6 +7,7 @@ import { hasRole, getUsersInRole } from '../../../authorization';
 import { settings } from '../../../settings';
 import { Notifications } from '../../../notifications';
 import { callbacks } from '../../../callbacks';
+import { getConfig } from '../../../federation/server/config';
 
 export const deleteUser = function(userId) {
 	const user = Users.findOneById(userId, {
@@ -101,5 +102,6 @@ export const deleteUser = function(userId) {
 	callbacks.run('afterDeleteUser', { _id: userId });
 
 	// Refresh the peers list
-	FederationPeers.refreshPeers();
+	const { peer: { domain: localPeerDomain } } = getConfig();
+	FederationPeers.refreshPeers(localPeerDomain);
 };
