@@ -8,7 +8,6 @@ import { Users, Messages, Subscriptions, Rooms, LivechatDepartmentAgents } from 
 import { hasPermission } from '../../../authorization';
 import { RateLimiter } from '../lib';
 import { Notifications } from '../../../notifications/server';
-import { callbacks } from '../../../callbacks';
 
 import { checkUsernameAvailability, setUserAvatar, getAvatarSuggestionForUser } from '.';
 
@@ -93,7 +92,6 @@ export const _setUsername = function(userId, u) {
 		name: user.name,
 		username: user.username,
 	});
-	callbacks.run('afterUsernameChange', { _id: user._id, username });
 
 	return user;
 };

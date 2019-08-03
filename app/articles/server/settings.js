@@ -10,16 +10,6 @@ Meteor.startup(() => {
 			public: true,
 		});
 
-		this.add('Article_Site_Title', 'Rocket.Chat', {
-			type: 'string',
-			enableQuery: {
-				_id: 'Articles_Enabled',
-				value: true,
-			},
-			i18nLabel: 'Article_Site_Title',
-			public: true,
-		});
-
 		this.add('Article_Site_Url', 'http://localhost:2368', {
 			type: 'string',
 			enableQuery: {

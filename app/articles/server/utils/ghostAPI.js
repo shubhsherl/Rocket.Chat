@@ -40,7 +40,6 @@ export const ghostAPI = new class {
 
 	setupGhost(loginToken) {
 		const rcUrl = Meteor.absoluteUrl().replace(/\/$/, '');
-		const blogTitle = settings.get('Article_Site_Title');
 		const announceToken = Random.secret(30);
 		const settingsToken = Random.secret(30);
 		settings.updateById('Announcement_Token', announceToken);
@@ -52,7 +51,6 @@ export const ghostAPI = new class {
 				rc_token: loginToken,
 				announce_token: announceToken,
 				settings_token: settingsToken,
-				blogTitle,
 			}],
 		};
 		return HTTP.call('POST', buildUrl('authentication', 'setup'), { data, headers: { 'Content-Type': 'application/json' } });

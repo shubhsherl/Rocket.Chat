@@ -10,14 +10,4 @@ const callbackHandler = function _callbackHandler(eventType) {
 
 const priority = settings.get('Articles_Enabled') ? callbacks.priority.HIGH : callbacks.priority.LOW;
 
-callbacks.add('afterUserEmailChange', callbackHandler('userEmail'), priority);
-callbacks.add('afterUserRealNameChange', callbackHandler('userRealname'), priority);
-callbacks.add('afterUsernameChange', callbackHandler('userName'), priority);
-callbacks.add('afterRoomTypeChange', callbackHandler('roomType'), priority);
 callbacks.add('afterDeleteUser', callbackHandler('deleteUser'), priority);
-// TODO: find why roomName have no arg passed even with High priority.
-callbacks.add('afterRoomNameChange', callbackHandler('roomName'), priority);
-
-settings.get('Article_Site_Title', (key, value) => {
-	triggerHandler.executeTrigger('siteTitle', { title: value });
-});

@@ -6,7 +6,6 @@ import { settings } from '../../../settings';
 import { Notifications } from '../../../notifications';
 import { hasPermission } from '../../../authorization';
 import { RateLimiter } from '../lib';
-import { callbacks } from '../../../callbacks';
 
 export const _setRealName = function(userId, name) {
 	name = s.trim(name);
@@ -42,7 +41,6 @@ export const _setRealName = function(userId, name) {
 			username: user.username,
 		});
 	}
-	callbacks.run('afterUserRealNameChange', { _id: user._id, name });
 
 	return user;
 };
