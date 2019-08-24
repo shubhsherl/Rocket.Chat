@@ -944,6 +944,14 @@ Template.room.events({
 
 		await call('sendMessage', msgObject);
 	},
+	'click .js-actionButton-openRoom'(event) {
+		const rid = event.currentTarget.value;
+		if (!rid) {
+			return;
+		}
+
+		FlowRouter.goToRoomById(rid);
+	},
 	'click .js-actionButton-respondWithMessage'(event, instance) {
 		const rid = instance.data._id;
 		const msg = event.currentTarget.value;
