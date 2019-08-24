@@ -44,7 +44,7 @@ const Api = new Restivus({
 				};
 			}
 
-			const user = this.bodyParams.userId ? Models.Users.findOne({ _id: this.bodyParams.userId }) : Models.Users.findOne({ username: this.bodyParams.username });
+			const user = Models.Users.findOne({ _id: this.bodyParams.userId });
 
 			return { user };
 		},
@@ -78,26 +78,7 @@ function executeAnnouncementRest() {
 	}
 }
 
-function executefetchUserRest() {
-	try {
-		const { _id, name, username, emails } = this.user;
-		const user = { _id, name, username, emails };
-
-		return API.v1.success({ user });
-	} catch ({ error, message }) {
-		return API.v1.failure(error || message);
-	}
-}
-
 Api.addRoute(':token', { authRequired: true }, {
 	post: executeAnnouncementRest,
 	get: executeAnnouncementRest,
-});
-
-// If a user is editor/admin in Ghost but is not an admin in RC,
-// then the e-mail will not be provided to that user
-// This method will allow user to fetch user with email.
-Api.addRoute(':token/getUser', { authRequired: true }, {
-	post: executefetchUserRest,
-	get: executefetchUserRest,
 });
