@@ -58,7 +58,7 @@ describe('[User Preferences]', () => {
 				preferencesMainContent.changeRealName(`EditedRealName${ username }`);
 			});
 
-			it('it should change the Username field', () => {
+			it.skip('it should change the Username field', () => {
 				preferencesMainContent.changeUsername(`EditedUserName${ username }`);
 			});
 
