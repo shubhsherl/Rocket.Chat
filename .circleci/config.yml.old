@@ -115,21 +115,10 @@ jobs:
             # rm -rf node_modules
             # rm -f package-lock.json
             meteor npm install
-<<<<<<< HEAD:.circleci/config.yml.old
-<<<<<<< HEAD:.circleci/config.yml.old
-
-=======
->>>>>>> 9a84f0bdd... use upstream config.yml:.circleci/config.yml
       - run:
           name: Lint
           command: |
             meteor npm run lint
-=======
-      # - run:
-      #     name: Lint
-      #     command: |
-      #       meteor npm run lint
->>>>>>> 0e5e28b43... disable lint for now:.circleci/config.yml
       - run:
           name: Unit Test
           command: |
