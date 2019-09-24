@@ -442,7 +442,9 @@ jobs:
             #docker push rocketchat/rocket.chat.preview:pr-$CIRCLE_PR_NUMBER
 
 workflows:
-  version: 2
+  version: 2.1
+  orbs:
+    aws-ecr: circleci/aws-ecr@x.y.z
   build-and-test:
     jobs:
       - hold-all:
