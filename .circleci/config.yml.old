@@ -481,7 +481,7 @@ jobs:
             cd /tmp/build-pr
             tar xzf repo.tar.gz
             rm repo.tar.gz
-            cp ~/repo/.docker/Dockerfile .
+            cp ~/repo/.docker/Dockerfile /tmp/build-pr
 
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             echo "Build official Docker image"
