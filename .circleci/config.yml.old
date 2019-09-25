@@ -501,6 +501,7 @@ jobs:
             rm repo.tar.gz
             cp ~/repo/.docker/Dockerfile /tmp/build-pr
             export WIDECHAT_SERVER_VERSION=$(jq '.version' ~/repo/app/utils/rocketchat.info)
+            echo $WIDECHAT_SERVER_VERSION
 
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             echo "Build official Docker image"
