@@ -503,16 +503,25 @@ jobs:
             export WIDECHAT_SERVER_VERSION=$(jq '.version' ~/repo/app/utils/rocketchat.info)
             echo $WIDECHAT_SERVER_VERSION
 
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            echo "Build official Docker image"
-            cp ~/repo/.docker/Dockerfile .
-            docker build -t rocketchat/rocket.chat:pr-$CIRCLE_PR_NUMBER .
-            docker push rocketchat/rocket.chat:pr-$CIRCLE_PR_NUMBER
-            #echo "Build preview Docker image"
-            #cp ~/repo/.docker-mongo/Dockerfile .
-            #cp ~/repo/.docker-mongo/entrypoint.sh .
-            #docker build -t rocketchat/rocket.chat.preview:pr-$CIRCLE_PR_NUMBER .
-            #docker push rocketchat/rocket.chat.preview:pr-$CIRCLE_PR_NUMBER
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: ${AWS_RESOURCE_NAME_PREFIX}
+          region: AWS_DEFAULT_REGION
+          tag: $(jq -r '.version' ~/repo/app/utils/rocketchat.info)
+          dockerfile: /tmp/build-pr/Dockerfile
+          path: "/tmp/build-pr"
+          checkout: false
+
+            # docker login -u $DOCKER_USER -p $DOCKER_PASS
+            # echo "Build official Docker image"
+            # cp ~/repo/.docker/Dockerfile .
+            # docker build -t rocketchat/rocket.chat:pr-$CIRCLE_PR_NUMBER .
+            # docker push rocketchat/rocket.chat:pr-$CIRCLE_PR_NUMBER
+            # #echo "Build preview Docker image"
+            # #cp ~/repo/.docker-mongo/Dockerfile .
+            # #cp ~/repo/.docker-mongo/entrypoint.sh .
+            # #docker build -t rocketchat/rocket.chat.preview:pr-$CIRCLE_PR_NUMBER .
+            # #docker push rocketchat/rocket.chat.preview:pr-$CIRCLE_PR_NUMBER
 workflows:
   version: 2
   build-and-test:
