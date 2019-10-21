@@ -1,6 +1,8 @@
 import './polyfills';
 
-import './lib/meteorCallWrapper';
+import './importServiceWorker';
+
+import './importsCss';
 import './importPackages';
 import '../imports/startup/client';
 
