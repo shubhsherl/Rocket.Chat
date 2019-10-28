@@ -66,6 +66,9 @@
 					{{#if msg.private}}
 						<span class="private">{{_ "Only_you_can_see_this_message"}}</span>
 					{{/if}}
+					<!-- {{#if msg.tempDelete}}
+						<span class="private"> {{_ "Message_removed"}} </span>
+					{{/if}} -->
 					{{#if fromSearch}}
 						<span class="user color-info-font-color">
 							{{>icon icon=roomIcon}}{{channelName}}
