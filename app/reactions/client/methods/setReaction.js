@@ -59,7 +59,7 @@ Meteor.methods({
 
 			if (_.isEmpty(message.reactions)) {
 				delete message.reactions;
-				Messages.unsetReactions(messageId);
+				Messages.unsetReactions(messageId, tempActions);
 				callbacks.run('unsetReaction', messageId, reaction);
 			} else {
 				Messages.setReactions(messageId, message.reactions, tempActions);

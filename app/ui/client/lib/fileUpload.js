@@ -194,8 +194,9 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 				description: document.getElementById('file-description').value,
 			};
 
+			console.log(file);
 			const upload = fileUploadHandler('Uploads', record, file.file);
-
+			console.log(upload);
 			uploadNextFile();
 
 			const uploads = Session.get('uploading') || [];
@@ -214,8 +215,21 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 				Session.set('uploading', uploads);
 			};
 
+			function sendFileMessage(file, storage) {
+				Meteor.call('sendFileMessage', rid, storage, file, { msg, tmid }, () => {
+					$(input)
+						.removeData('reply')
+						.trigger('dataChange');
+
+					setTimeout(() => {
+						const uploads = Session.get('uploading') || [];
+						Session.set('uploading', uploads.filter((u) => u.id !== upload.id));
+					}, 2000);
+				});
+			}
+
 			upload.start((error, file, storage) => {
-				console.log('start');
+				console.log('reached server');
 				if (error) {
 					const uploads = Session.get('uploading') || [];
 					uploads.filter((u) => u.id === upload.id).forEach((u) => {
@@ -230,17 +244,8 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 				if (!file) {
 					return;
 				}
-
-				Meteor.call('sendFileMessage', rid, storage, file, { msg, tmid }, () => {
-					$(input)
-						.removeData('reply')
-						.trigger('dataChange');
-
-					setTimeout(() => {
-						const uploads = Session.get('uploading') || [];
-						Session.set('uploading', uploads.filter((u) => u.id !== upload.id));
-					}, 2000);
-				});
+				
+				sendFileMessage(file, storage);
 			});
 
 			Tracker.autorun((computation) => {

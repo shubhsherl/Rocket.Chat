@@ -53,12 +53,15 @@ export class FileUploadBase {
 	}
 
 	start(callback) {
-		console.log('heree client');
 		this.handler = new UploadFS.Uploader({
 			store: this.store,
 			data: this.file,
 			file: this.meta,
 			onError: (err) => callback(err),
+			onCreate: (file) => {
+				console.log('onCreate');
+				// sendMessage(file, this.store.options.name);
+			},
 			onComplete: (fileData) => {
 				const file = _.pick(fileData, '_id', 'type', 'size', 'name', 'identify', 'description');
 
