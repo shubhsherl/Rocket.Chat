@@ -58,10 +58,10 @@ export class FileUploadBase {
 			data: this.file,
 			file: this.meta,
 			onError: (err) => callback(err),
-			onCreate: (file) => {
-				console.log('onCreate');
-				// sendMessage(file, this.store.options.name);
-			},
+			// onCreate: (file) => {
+			// 	console.log('onCreate');
+			// 	// offlineUpload(file, this.store.options.name, 'insert');
+			// },
 			onComplete: (fileData) => {
 				const file = _.pick(fileData, '_id', 'type', 'size', 'name', 'identify', 'description');
 

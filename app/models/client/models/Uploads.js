@@ -1,5 +1,4 @@
 import { Base } from './_Base';
-import { PersistentMinimongo2 } from 'meteor/frozeman:persistent-minimongo2';
 
 export class Uploads extends Base {
 	constructor() {

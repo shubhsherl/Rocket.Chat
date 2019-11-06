@@ -7,6 +7,8 @@ import { Handlebars } from 'meteor/ui';
 import { fileUploadHandler } from '../../../file-upload';
 import { t, fileUploadIsValidContentType } from '../../../utils';
 import { modal, prependReplies } from '../../../ui-utils';
+import { ChatMessage } from '../../../models/client';
+import { call } from '../../../utils/client';
 
 
 const readAsDataURL = (file, callback) => {
@@ -215,7 +217,21 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 				Session.set('uploading', uploads);
 			};
 
+			function offlineUpload(file, storage, action) {
+				const message = msg;
+
+				if (action === 'remove') {
+					ChatMessage.remove({
+						_id: message._id,
+						'u._id': Meteor.userId(),
+					});
+					return;
+				}
+				call('sendMessage', message);
+			}
+
 			function sendFileMessage(file, storage) {
+				// offlineUpload(file, storage, 'remove');
 				Meteor.call('sendFileMessage', rid, storage, file, { msg, tmid }, () => {
 					$(input)
 						.removeData('reply')
@@ -244,9 +260,9 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 				if (!file) {
 					return;
 				}
-				
+
 				sendFileMessage(file, storage);
-			});
+			}, offlineUpload);
 
 			Tracker.autorun((computation) => {
 				const isCanceling = Session.get(`uploading-cancel-${ upload.id }`);

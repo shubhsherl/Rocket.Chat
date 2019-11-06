@@ -17,7 +17,7 @@ Meteor.methods({
 		const room = Rooms.findOne({ _id: message.rid });
 		const tempActions = message.tempActions || {};
 
-		if(tempActions.delete) {
+		if (tempActions.delete) {
 			return false;
 		}
 
