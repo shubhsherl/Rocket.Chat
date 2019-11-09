@@ -19,6 +19,32 @@ const setStatus = (status, statusText) => {
 	popover.close();
 };
 
+const viewModeIcon = {
+	extended: 'th-list',
+	medium: 'list',
+	condensed: 'list-alt',
+};
+
+const extendedViewOption = (user) => {
+	if (settings.get('Store_Last_Message')) {
+		return {
+			icon: viewModeIcon.extended,
+			name: t('Extended'),
+			modifier: /Mobi/.test(navigator.userAgent) || getUserPreference(user, 'sidebarViewMode') === 'extended' ? 'bold' : null,
+			action: () => {
+				if (/Mobi/.test(navigator.userAgent)) {
+					return;
+				}
+				Meteor.call('saveUserPreferences', { sidebarViewMode: 'extended' }, function(error) {
+					if (error) {
+						return handleError(error);
+					}
+				});
+			},
+		};
+	}
+};
+
 const showToolbar = new ReactiveVar(false);
 
 export const toolbarSearch = {
@@ -57,6 +83,76 @@ const toolbarButtons = (/* user */) => [{
 	action: () => {
 		menu.close();
 		FlowRouter.go('directory');
+	},
+},
+{
+	name: t('View_mode'),
+	icon: () => viewModeIcon[getUserPreference(user, 'sidebarViewMode') || 'condensed'],
+	hasPopup: true,
+	action: (e) => {
+		const hideAvatarSetting = getUserPreference(user, 'sidebarHideAvatar');
+		const config = {
+			columns: [
+				{
+					groups: [
+						{
+							items: [
+								extendedViewOption(user),
+								{
+									icon: viewModeIcon.medium,
+									name: t('Medium'),
+									modifier: !/Mobi/.test(navigator.userAgent) && getUserPreference(user, 'sidebarViewMode') === 'medium' ? 'bold' : null,
+									action: () => {
+										if (/Mobi/.test(navigator.userAgent)) {
+											return;
+										}
+										Meteor.call('saveUserPreferences', { sidebarViewMode: 'medium' }, function(error) {
+											if (error) {
+												return handleError(error);
+											}
+										});
+									},
+								},
+								{
+									icon: viewModeIcon.condensed,
+									name: t('Condensed'),
+									modifier: !/Mobi/.test(navigator.userAgent) && getUserPreference(user, 'sidebarViewMode') === 'condensed' ? 'bold' : null,
+									action: () => {
+										if (/Mobi/.test(navigator.userAgent)) {
+											return;
+										}
+										Meteor.call('saveUserPreferences', { sidebarViewMode: 'condensed' }, function(error) {
+											if (error) {
+												return handleError(error);
+											}
+										});
+									},
+								},
+							],
+						},
+						{
+							items: [
+								{
+									icon: 'user-rounded',
+									name: hideAvatarSetting ? t('Show_Avatars') : t('Hide_Avatars'),
+									action: () => {
+										Meteor.call('saveUserPreferences', { sidebarHideAvatar: !hideAvatarSetting }, function(error) {
+											if (error) {
+												return handleError(error);
+											}
+										});
+									},
+								},
+							],
+						},
+					],
+				},
+			],
+			currentTarget: e.currentTarget,
+			offsetVertical: e.currentTarget.clientHeight + 10,
+		};
+
+		popover.open(config);
 	},
 },
 {
