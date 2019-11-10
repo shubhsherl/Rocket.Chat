@@ -104,10 +104,20 @@ const redirectToDefaultChannelIfNeeded = () => {
 	});
 };
 
+const openMainContentIfNeeded = () => {
+	const currentRouteState = FlowRouter.current();
+	const defaults = ['/', '/home'];
+
+	if(!defaults.includes(currentRouteState.path)){
+		menu.close();
+	}
+}
+
 Template.sideNav.onRendered(function() {
 	SideNav.init();
 	menu.init();
 	redirectToDefaultChannelIfNeeded();
+	openMainContentIfNeeded();
 
 	return Meteor.defer(() => menu.updateUnreadBars());
 });
