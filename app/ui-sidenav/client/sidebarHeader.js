@@ -12,6 +12,7 @@ import { userStatus } from '../../user-status';
 import { hasPermission } from '../../authorization/client';
 import { createTemplateForComponent } from '../../../client/reactAdapters';
 
+import { isMobile } from '../../utils/client/lib/isMobile';
 
 const setStatus = (status, statusText) => {
 	AccountBox.setStatus(status, statusText);
@@ -30,9 +31,9 @@ const extendedViewOption = (user) => {
 		return {
 			icon: viewModeIcon.extended,
 			name: t('Extended'),
-			modifier: /Mobi/.test(navigator.userAgent) || getUserPreference(user, 'sidebarViewMode') === 'extended' ? 'bold' : null,
+			modifier: isMobile() || getUserPreference(user, 'sidebarViewMode') === 'extended' ? 'bold' : null,
 			action: () => {
-				if (/Mobi/.test(navigator.userAgent)) {
+				if (isMobile()) {
 					return;
 				}
 				Meteor.call('saveUserPreferences', { sidebarViewMode: 'extended' }, function(error) {
@@ -101,9 +102,9 @@ const toolbarButtons = (/* user */) => [{
 								{
 									icon: viewModeIcon.medium,
 									name: t('Medium'),
-									modifier: !/Mobi/.test(navigator.userAgent) && getUserPreference(user, 'sidebarViewMode') === 'medium' ? 'bold' : null,
+									modifier: !isMobile() && getUserPreference(user, 'sidebarViewMode') === 'medium' ? 'bold' : null,
 									action: () => {
-										if (/Mobi/.test(navigator.userAgent)) {
+										if (isMobile()) {
 											return;
 										}
 										Meteor.call('saveUserPreferences', { sidebarViewMode: 'medium' }, function(error) {
@@ -116,9 +117,9 @@ const toolbarButtons = (/* user */) => [{
 								{
 									icon: viewModeIcon.condensed,
 									name: t('Condensed'),
-									modifier: !/Mobi/.test(navigator.userAgent) && getUserPreference(user, 'sidebarViewMode') === 'condensed' ? 'bold' : null,
+									modifier: !isMobile() && getUserPreference(user, 'sidebarViewMode') === 'condensed' ? 'bold' : null,
 									action: () => {
-										if (/Mobi/.test(navigator.userAgent)) {
+										if (isMobile()) {
 											return;
 										}
 										Meteor.call('saveUserPreferences', { sidebarViewMode: 'condensed' }, function(error) {

@@ -10,6 +10,7 @@ import { settings } from '../../settings';
 import { hasAtLeastOnePermission } from '../../authorization';
 import { timeAgo } from '../../lib/client/lib/formatDate';
 import { getUidDirectMessage } from '../../ui-utils/client/lib/getUidDirectMessage';
+import { isMobile } from '../../utils/client/lib/isMobile';
 
 Template.sidebarItem.helpers({
 	streaming() {
@@ -19,7 +20,7 @@ Template.sidebarItem.helpers({
 		return this.rid || this._id;
 	},
 	isExtendedViewMode() {
-		if (/Mobi/.test(navigator.userAgent)) {
+		if (isMobile()) {
 			return true;
 		}
 		return getUserPreference(Meteor.userId(), 'sidebarViewMode') === 'extended';
@@ -82,7 +83,7 @@ Template.sidebarItem.onCreated(function() {
 		const currentData = Template.currentData();
 
 		if (!currentData.lastMessage || getUserPreference(Meteor.userId(), 'sidebarViewMode') !== 'extended') {
-			if (!/Mobi/.test(navigator.userAgent)) {
+			if (!isMobile()) {
 				return clearInterval(this.timeAgoInterval);
 			}
 		}
