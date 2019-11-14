@@ -6,9 +6,8 @@ import { Template } from 'meteor/templating';
 
 import { SideNav, menu } from '../../ui-utils';
 import { settings } from '../../settings';
-import { roomTypes, getUserPreference } from '../../utils';
+import { roomTypes, getUserPreference, isMobile } from '../../utils';
 import { Users } from '../../models';
-import { isMobile } from '../../utils/client/lib/isMobile';
 
 Template.sideNav.helpers({
 	flexTemplate() {

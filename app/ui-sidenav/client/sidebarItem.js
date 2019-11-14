@@ -3,7 +3,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
 
-import { t, getUserPreference, roomTypes } from '../../utils';
+import { t, getUserPreference, roomTypes, isMobile } from '../../utils';
 import { popover, renderMessageBody, menu } from '../../ui-utils';
 import { Users, ChatSubscription } from '../../models/client';
 import { settings } from '../../settings';

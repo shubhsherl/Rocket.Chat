@@ -22,3 +22,4 @@ export { canDeleteMessage } from './lib/canDeleteMessage';
 export { mime } from '../lib/mimeTypes';
 export { secondsToHHMMSS } from '../lib/timeConverter';
 export { hex_sha1 } from './lib/sha1';
+export { isMobile } from './lib/isMobile';
