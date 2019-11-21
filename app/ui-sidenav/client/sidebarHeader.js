@@ -79,8 +79,18 @@ const toolbarButtons = (/* user */) => [{
 	},
 },
 {
+	name: t('Search Input'),
+	icon: '',
+	condition: () => isMobile(),
+	action: () => {
+		toolbarSearch.show(false);
+	},
+	searchBar: true,
+},
+{
 	name: t('Directory'),
 	icon: 'discover',
+	condition: () => !isMobile(),
 	action: () => {
 		menu.close();
 		FlowRouter.go('directory');
@@ -349,6 +359,12 @@ Template.sidebarHeader.events({
 			e.currentTarget.blur();
 		}
 		return this.action && this.action.apply(this, [e]);
+	},
+	'click #searchBar'() {
+		toolbarSearch.show(false);
+	},
+	'focus #searchBar'() {
+		toolbarSearch.show(false);
 	},
 	'click .sidebar__header .avatar'(e) {
 		if (!(Meteor.userId() == null && settings.get('Accounts_AllowAnonymousRead'))) {
