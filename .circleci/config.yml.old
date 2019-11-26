@@ -471,7 +471,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - meteor-cache-{{ checksum ".circleci/config.yml" }}-{{ checksum ".meteor/versions" }}
+            - meteor-cache-{{ checksum ".circleci/config.yml" }}-{{ checksum ".meteor/versions" }
 
       - run:
           name: Build Rocket.Chat
