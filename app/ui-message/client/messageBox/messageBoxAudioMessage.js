@@ -6,6 +6,21 @@ import { settings } from '../../../settings';
 import { AudioRecorder } from '../../../ui';
 import { t } from '../../../utils';
 import './messageBoxAudioMessage.html';
+import { ChatMessage } from '../../../models/client';
+
+const setMsgId = (msgData = {}) => {
+	let id;
+	if (msgData.id) {
+		id = msgData.id;
+	} else {
+		id = Random.id();
+	}
+	return Object.assign({
+		id,
+		msg: '',
+		groupable: false,
+	}, msgData);
+};
 
 const startRecording = () => new Promise((resolve, reject) =>
 	AudioRecorder.start((result) => (result ? resolve() : reject())));

@@ -143,14 +143,6 @@ const mountPopover = (e, i, outerContext) => {
 	popover.open(config);
 };
 
-const wipeFailedUploads = () => {
-	const uploads = Session.get('uploading');
-
-	if (uploads) {
-		Session.set('uploading', uploads.filter((upload) => !upload.error));
-	}
-};
-
 function roomHasGlobalPurge(room) {
 	if (!settings.get('RetentionPolicy_Enabled')) {
 		return false;
@@ -336,10 +328,6 @@ Template.room.helpers({
 
 	windowId() {
 		return `chat-window-${ this._id }`;
-	},
-
-	uploading() {
-		return Session.get('uploading');
 	},
 
 	roomLeader() {
