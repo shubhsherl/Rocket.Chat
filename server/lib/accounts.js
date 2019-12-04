@@ -146,9 +146,6 @@ const getLinkedInName = ({ firstName, lastName }) => {
 Accounts.onCreateUser(function(options, user = {}) {
 	callbacks.run('beforeCreateUser', options, user);
 
-	// EAR testing
-	// callbacks.run('customOauthRegisterNewUser', 'earTestId');
-
 	user.status = 'offline';
 	user.active = !settings.get('Accounts_ManuallyApproveNewUsers');
 
@@ -162,6 +159,10 @@ Accounts.onCreateUser(function(options, user = {}) {
 			}
 		}
 	}
+
+	// EAR testing
+	// const uid = crypto.createHash('sha1').update('eric').digest('hex');
+	// callbacks.run('customOauthRegisterNewUser', uid);
 
 	if (user.services) {
 		const verified = settings.get('Accounts_Verify_Email_For_External_Accounts');
