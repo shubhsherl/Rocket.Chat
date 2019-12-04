@@ -13,7 +13,7 @@ import { menu } from './menu';
 import { roomTypes } from '../../../utils';
 import { callbacks } from '../../../callbacks';
 import { Notifications } from '../../../notifications';
-import { CachedChatRoom, ChatMessage, ChatSubscription, CachedChatSubscription } from '../../../models';
+import { CachedChatRoom, ChatMessage, ChatSubscription, CachedChatSubscription, CachedChatMessage } from '../../../models';
 import { CachedCollectionManager } from '../../../ui-cached-collection';
 import { getConfig } from '../config';
 import { ROOM_DATA_STREAM } from '../../../utils/stream/constants';
@@ -28,6 +28,7 @@ const onDeleteMessageStream = (msg) => {
 
 	// remove thread refenrece from deleted message
 	ChatMessage.update({ tmid: msg._id }, { $unset: { tmid: 1 } }, { multi: true });
+	CachedChatMessage.save();
 };
 const onDeleteMessageBulkStream = ({ rid, ts, excludePinned, ignoreDiscussion, users }) => {
 	const query = { rid, ts };
@@ -41,6 +42,7 @@ const onDeleteMessageBulkStream = ({ rid, ts, excludePinned, ignoreDiscussion, u
 		query['u.username'] = { $in: users };
 	}
 	ChatMessage.remove(query);
+	CachedChatMessage.save();
 };
 
 export const RoomManager = new function() {
