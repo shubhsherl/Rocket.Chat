@@ -163,10 +163,6 @@ Accounts.onCreateUser(function(options, user = {}) {
 		}
 	}
 
-	// EAR testing
-	// const uid = crypto.createHash('sha1').update('eric').digest('hex');
-	// callbacks.run('customOauthRegisterNewUser', uid);
-
 	if (user.services) {
 		const verified = settings.get('Accounts_Verify_Email_For_External_Accounts');
 
