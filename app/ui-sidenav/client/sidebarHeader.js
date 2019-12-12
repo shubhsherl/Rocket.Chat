@@ -47,12 +47,24 @@ const extendedViewOption = (user) => {
 };
 
 const showToolbar = new ReactiveVar(false);
+let hideHeader = true;
 
 export const toolbarSearch = {
 	shortcut: false,
-	show(fromShortcut) {
+	clear() {
+		const $inputMessage = $('.js-input-message');
+
+		if ($inputMessage.length === 0) {
+			return;
+		}
+
+		$inputMessage.focus();
+		$(selectorSearch).val('');
+	},
+	show(fromShortcut, header = true) {
 		menu.open();
 		showToolbar.set(true);
+		hideHeader = header;
 		this.shortcut = fromShortcut;
 	},
 	close() {
@@ -74,6 +86,7 @@ const toolbarButtons = (/* user */) => [{
 {
 	name: t('Search'),
 	icon: 'magnifier',
+	condition: () => !isMobile(),
 	action: () => {
 		toolbarSearch.show(false);
 	},
@@ -83,7 +96,7 @@ const toolbarButtons = (/* user */) => [{
 	icon: '',
 	condition: () => isMobile(),
 	action: () => {
-		toolbarSearch.show(false);
+		toolbarSearch.show(false, false);
 	},
 	searchBar: true,
 },
@@ -351,6 +364,9 @@ Template.sidebarHeader.helpers({
 	showToolbar() {
 		return showToolbar.get();
 	},
+	hideHeader() {
+		return hideHeader;
+	},
 });
 
 Template.sidebarHeader.events({
@@ -361,10 +377,13 @@ Template.sidebarHeader.events({
 		return this.action && this.action.apply(this, [e]);
 	},
 	'click #searchBar'() {
-		toolbarSearch.show(false);
+		toolbarSearch.show(false, false);
 	},
 	'focus #searchBar'() {
-		toolbarSearch.show(false);
+		toolbarSearch.show(false, false);
+	},
+	'blur #searchBar'() {
+		toolbarSearch.clear();
 	},
 	'click .sidebar__header .avatar'(e) {
 		if (!(Meteor.userId() == null && settings.get('Accounts_AllowAnonymousRead'))) {
