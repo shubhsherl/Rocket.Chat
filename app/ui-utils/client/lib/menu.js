@@ -104,11 +104,8 @@ export const menu = new class extends EventEmitter {
 					this.diff = 0;
 				}
 			}
-			// if (map((this.diff / sideNavW), 0, 1, -.1, .8) > 0) {
 			this.sidebar.css('box-shadow', '0 0 15px 1px rgba(0,0,0,.3)');
-			// this.sidebarWrap.css('z-index', '9998');
 			this.translate(this.diff);
-			// }
 		}
 	}
 
