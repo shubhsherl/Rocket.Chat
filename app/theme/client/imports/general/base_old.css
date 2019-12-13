@@ -160,10 +160,11 @@
 }
 
 .connection-status .short-alert {
-	display: none;
 	position: absolute;
 	z-index: 1000000;
 	top: 0;
+
+	display: none;
 
 	width: 100%;
 	padding: 2px;
@@ -4205,9 +4206,11 @@
 	.flex-tab-container.opened {
 		left: 0;
 	}
+
 	.connection-status .short-alert {
-			display: inline;
+		display: inline;
 	}
+
 	.connection-status .alert {
 		display: none;
 	}
