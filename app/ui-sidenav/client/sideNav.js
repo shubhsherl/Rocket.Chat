@@ -3,6 +3,7 @@ import { Tracker } from 'meteor/tracker';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Template } from 'meteor/templating';
+import { Tracker } from 'meteor/tracker';
 
 import { SideNav, menu } from '../../ui-utils';
 import { settings } from '../../settings';
@@ -111,7 +112,9 @@ const openMainContentIfNeeded = () => {
 	const currentRouteState = FlowRouter.current();
 	const defaults = ['/', '/home'];
 
-	if (!defaults.includes(currentRouteState.path)) {
+	if (defaults.includes(currentRouteState.path)) {
+		menu.open();
+	} else {
 		menu.close();
 	}
 };
@@ -120,7 +123,10 @@ Template.sideNav.onRendered(function() {
 	SideNav.init();
 	menu.init();
 	redirectToDefaultChannelIfNeeded();
-	openMainContentIfNeeded();
+	Tracker.autorun(function() {
+		FlowRouter.watchPathChange();
+		openMainContentIfNeeded();
+	});
 
 	return Meteor.defer(() => menu.updateUnreadBars());
 });
