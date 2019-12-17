@@ -7,6 +7,8 @@ import { TAPi18n } from 'meteor/rocketchat:tap-i18n';
 import toastr from 'toastr';
 import _ from 'underscore';
 
+import { isMobile } from '../../../utils/client';
+
 Template.RocketSearch.onCreated(function() {
 	this.provider = new ReactiveVar();
 	this.isActive = new ReactiveVar(false);
@@ -144,6 +146,9 @@ Template.RocketSearch.events = {
 };
 
 Template.RocketSearch.helpers({
+	isMobile() {
+		return isMobile();
+	},
 	error() {
 		return Template.instance().error.get();
 	},

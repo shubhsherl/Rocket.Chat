@@ -11,7 +11,7 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
 
-import { t, roomTypes, getUserPreference, handleError } from '../../../../utils';
+import { t, roomTypes, getUserPreference, handleError, isMobile } from '../../../../utils';
 import { WebRTC } from '../../../../webrtc/client';
 import { ChatMessage, RoomRoles, Users, Subscriptions, Rooms } from '../../../../models';
 import {
@@ -269,6 +269,12 @@ export const dropzoneHelpers = {
 
 Template.room.helpers({
 	...dropzoneHelpers,
+	openSearchPage() {
+		if (!isMobile()) {
+			return false;
+		}
+		return Session.get('openSearchPage');
+	},
 	isTranslated() {
 		const { state } = Template.instance();
 		return settings.get('AutoTranslate_Enabled')
@@ -997,6 +1003,7 @@ Template.room.events({
 Template.room.onCreated(function() {
 	// this.scrollOnBottom = true
 	// this.typing = new msgTyping this.data._id
+	Session.set('openSearchPage', false);
 	const rid = this.data._id;
 
 	this.onFile = (filesToUpload) => {
@@ -1172,6 +1179,8 @@ Template.room.onDestroyed(function() {
 });
 
 Template.room.onRendered(function() {
+	Session.set('openSearchPage', false);
+
 	const { _id: rid } = this.data;
 
 	if (!chatMessages[rid]) {
