@@ -9,7 +9,7 @@ import s from 'underscore.string';
 import toastr from 'toastr';
 
 import { t, handleError, getUserPreference } from '../../utils';
-import { modal, SideNav } from '../../ui-utils';
+import { modal, SideNav, offlineAction } from '../../ui-utils';
 import { KonchatNotification } from '../../ui';
 import { settings } from '../../settings';
 import { CustomSounds } from '../../custom-sounds/client';
@@ -159,6 +159,10 @@ Template.accountPreferences.onCreated(function() {
 	};
 
 	this.save = function() {
+		if (offlineAction('Updating preference')) {
+			return;
+		}
+
 		instance = this;
 		const data = {};
 
