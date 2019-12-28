@@ -24,3 +24,4 @@ export { mime } from '../lib/mimeTypes';
 export { secondsToHHMMSS } from '../lib/timeConverter';
 export { isMobile } from './lib/isMobile';
 export { hex_sha1 } from './lib/sha1';
+export { share } from './lib/share';
