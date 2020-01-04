@@ -4,20 +4,22 @@ import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { Template } from 'meteor/templating';
 import { TAPi18n } from 'meteor/rocketchat:tap-i18n';
+import { Session } from 'meteor/session';
 
 import { timeAgo, formatDateAndTime } from '../../lib/client/lib/formatDate';
 import { DateFormat } from '../../lib/client';
 import { renderMessageBody, MessageTypes, MessageAction, call, normalizeThreadMessage } from '../../ui-utils/client';
-import { RoomRoles, UserRoles, Roles, Messages } from '../../models/client';
+import { RoomRoles, UserRoles, Roles, Messages, ChatMessage } from '../../models/client';
 import { callbacks } from '../../callbacks/client';
 import { Markdown } from '../../markdown/client';
-import { t, roomTypes } from '../../utils';
+// import { Markdown, MarkdownMessage } from '../../markdown/client';
+import { t, roomTypes, getURL } from '../../utils';
 import { upsertMessage } from '../../ui-utils/client/lib/RoomHistoryManager';
 import './message.html';
 import './messageThread.html';
 import { AutoTranslate } from '../../autotranslate/client';
 
-const renderBody = (msg, settings) => {
+const renderBody = (msg, settings, runMarkdown = true, markdownFn = null) => {
 	const isSystemMessage = MessageTypes.isSystemMessage(msg);
 	const messageType = MessageTypes.getType(msg) || {};
 
@@ -33,11 +35,11 @@ const renderBody = (msg, settings) => {
 		msg = callbacks.run('renderMentions', msg);
 		msg = msg.html;
 	} else {
-		msg = renderMessageBody(msg);
+		msg = renderMessageBody(msg, runMarkdown, markdownFn);
 	}
 
 	if (isSystemMessage) {
-		msg.html = Markdown.parse(msg.html);
+		// msg.html = Markdown.parse(msg.html);
 	}
 	return msg;
 };
@@ -45,7 +47,14 @@ const renderBody = (msg, settings) => {
 Template.message.helpers({
 	body() {
 		const { msg, settings } = this;
-		return Tracker.nonreactive(() => renderBody(msg, settings));
+		if (!Session.get(msg._id)) {
+			Session.set(msg._id, renderBody(msg, settings));
+		}
+		import('../../markdown/client').then((module) => {
+			Session.set(msg._id, renderBody(msg, settings, true, module.MarkdownMessage));
+			Session.set('refreshMessages', true);
+		});
+		return Session.get(msg._id);
 	},
 	and(a, b) {
 		return a && b;
