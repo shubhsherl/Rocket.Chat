@@ -34,6 +34,7 @@ Template.headerRoom.helpers({
 		return !roomTypes.getConfig(room.t).isGroupChat(room);
 	},
 	isDirect() { return Rooms.findOne(this._id).t === 'd'; },
+	isNotMobile: () => !isMobile(),
 	isToggleFavoriteButtonVisible: () => Template.instance().state.get('favorite') !== null,
 	isToggleFavoriteButtonChecked: () => Template.instance().state.get('favorite'),
 	toggleFavoriteButtonIconLabel: () => (Template.instance().state.get('favorite') ? t('Unfavorite') : t('Favorite')),

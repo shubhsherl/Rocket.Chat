@@ -1,12 +1,14 @@
 <template name="headerRoom">
-	{{#if openSearchPage}}
-		<header class="contextual-bar__header contextual-bar__header--empty">
-				<button class ="js-close-search" aria-label="{{_ "Close"}}" style="font-size: 1.2em;">
-					{{> icon icon="back"}}
-				</button>
-				<div class="contextual-bar__header-data">
-					{{> icon block="contextual-bar__header-icon" icon=icon}}
-					<h1 class="contextual-bar__header-title">Search Messages</h1>
+	<header class="rc-header rc-header--room" >
+		<div class="rc-header__wrap">
+
+			<div class="rc-header__block rc-header--burger">
+				{{> burger}}
+			</div>
+
+			{{#if $and isDiscussion isNotMobile}}
+				<div class="rc-header__block rc-header__block--action js-open-parent-channel rc-tooltip rc-tooltip--down rc-tooltip--start" aria-label={{_ "Back_to_room"}}>
+					<span class="rc-header__first-icon">{{> icon block="rc-header__icon rc-header__icon" icon="back"}}</span>
 				</div>
 		</header>
 	{{else}}
