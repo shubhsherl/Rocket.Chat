@@ -71,6 +71,27 @@ describe('[Main Elements Render]', function() {
 				sideNav.spotlightSearch.getText().should.equal('');
 			});
 		});
+
+		// NOTE: If you are using tiling window manager: test on floating window.
+		describe('spotlight search render in mobile view:', () => {
+			before(() => {
+				browser.setViewportSize({
+					width: 400,
+					height: 800
+				});
+			});
+			after(() => {
+				browser.setViewportSize({
+					width: 1000,
+					height: 800
+				});
+			})
+			it.only('it should show back button in room', () => {
+				mainContent.backButton.isVisible().should.be.true;
+				mainContent.backButton.click();
+				mainContent.messageInput.isVisible().should.be.false;
+			});
+		});
 	});
 
 	describe('[User Options]', () => {

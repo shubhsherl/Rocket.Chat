@@ -1,6 +1,6 @@
 import loginPage from '../../pageobjects/login.page';
 
-describe.only('[Service-Worker]', () => {
+describe('[Service-Worker]', () => {
 	before(() => {
 		loginPage.open();
 		// This Can Cause Timeouts erros if the server is slow so it should have a big wait

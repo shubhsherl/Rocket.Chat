@@ -10,6 +10,7 @@ class MainContent extends Page {
 
 	get channelTitle() { return browser.element('.rc-header__name'); }
 
+	get backButton() { return browser.element('.burger.menu-opened'); }
 	// Main Content Footer (Message Input Area)
 	get messageInput() { return browser.element('.js-input-message'); }
 
