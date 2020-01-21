@@ -86,7 +86,7 @@ describe('[Main Elements Render]', function() {
 					height: 800
 				});
 			})
-			it.only('it should show back button in room', () => {
+			it('it should show back button in room', () => {
 				mainContent.backButton.isVisible().should.be.true;
 				mainContent.backButton.click();
 				mainContent.messageInput.isVisible().should.be.false;
