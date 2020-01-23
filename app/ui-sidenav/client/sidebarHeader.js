@@ -10,6 +10,8 @@ import { settings } from '../../settings';
 import { hasAtLeastOnePermission } from '../../authorization';
 import { userStatus } from '../../user-status';
 
+const shouldShowSearchBar = () => window.innerWidth < 780; 
+
 const setStatus = (status, statusText) => {
 	AccountBox.setStatus(status, statusText);
 	callbacks.run('userStatusManuallySet', status);
@@ -60,8 +62,8 @@ export const toolbarSearch = {
 	},
 	show(fromShortcut, header = true) {
 		menu.open();
-		showToolbar.set(true);
 		hideHeader = header;
+		showToolbar.set(true);
 		this.shortcut = fromShortcut;
 	},
 	close() {
@@ -75,7 +77,7 @@ export const toolbarSearch = {
 const toolbarButtons = (user) => [{
 	name: t('Search'),
 	icon: 'magnifier',
-	condition: () => !isMobile(),
+	condition: () => !shouldShowSearchBar(),
 	action: () => {
 		toolbarSearch.show(false);
 	},
@@ -83,7 +85,7 @@ const toolbarButtons = (user) => [{
 {
 	name: t('Search Input'),
 	icon: '',
-	condition: () => isMobile(),
+	condition: () => shouldShowSearchBar(),
 	action: () => {
 		toolbarSearch.show(false, false);
 	},

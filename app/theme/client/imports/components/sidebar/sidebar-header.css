@@ -150,7 +150,7 @@
 	}
 }
 
-@media (width <= 600px) {
+@media (width <= 780px) {
 	.sidebar__toolbar {
 		& .rc-input > .rc-input__label > .rc-input__wrapper > #searchBar {
 			border-color: #81868d;
