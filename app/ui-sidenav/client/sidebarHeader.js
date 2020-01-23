@@ -62,8 +62,8 @@ export const toolbarSearch = {
 	},
 	show(fromShortcut, header = true) {
 		menu.open();
-		hideHeader = header;
 		showToolbar.set(true);
+		hideHeader = header;
 		this.shortcut = fromShortcut;
 	},
 	close() {

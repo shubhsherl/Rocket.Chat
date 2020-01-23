@@ -91,6 +91,11 @@ describe('[Main Elements Render]', function() {
 				mainContent.backButton.click();
 				mainContent.messageInput.isVisible().should.be.false;
 			});
+
+			it('it should show search bar on sidenav', () => {
+				browser.refresh();
+				sideNav.spotlightSearch.isVisible().should.be.true;
+			});
 		});
 	});
 
