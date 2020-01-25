@@ -1,5 +1,8 @@
 import loginPage from '../../pageobjects/login.page';
 
+const version = 'viasat-0.1';
+const file = '/manifest.json';
+
 describe('[Service-Worker]', () => {
 	before(() => {
 		loginPage.open();
@@ -18,11 +21,19 @@ describe('[Service-Worker]', () => {
     });
 
     it('it should create the cache storage', () => {
-        const { value } = browser.executeAsync((done) => {
-            const version = 'viasat-0.1';
+        const { value } = browser.executeAsync((version, done) => {
             caches.has(version)
                 .then((exist) => done(exist));
-        });
+        }, version);
         value.should.be.true;
+    });
+
+    it('it should cache the manifest file', () => {
+        const {value: {status}} = browser.executeAsync((version, file, done) => {
+            caches.open(version)
+                .then((storage) => storage.match(file)
+                    .then((res) => done(res)));
+        }, version, file);
+        status.should.equal(200);
     });
 });
