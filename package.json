@@ -72,6 +72,7 @@
 		"chimp-watch": "chimp --ddp=http://localhost:3000 --watch --mocha --path=tests/end-to-end",
 		"chimp-test": "chimp tests/chimp-config.js",
 		"postinstall": "node .scripts/npm-postinstall.js",
+		"pwatest": "./node_modules/.bin/wdio wdio.conf.js",
 		"testunit-watch": "mocha --watch --opts ./mocha.opts \"`node -e \"console.log(require('./package.json').mocha.tests.join(' '))\"`\"",
 		"coverage": "nyc -r html mocha --opts ./mocha.opts \"`node -e \"console.log(require('./package.json').mocha.tests.join(' '))\"`\"",
 		"testunit": "mocha --opts ./mocha.opts \"`node -e \"console.log(require('./package.json').mocha.tests.join(' '))\"`\"",
@@ -94,6 +95,12 @@
 		"@octokit/rest": "^16.1.0",
 		"@rocket.chat/eslint-config": "^0.3.0",
 		"@rocket.chat/livechat": "^1.1.6",
+		"@wdio/cli": "^5.18.1",
+		"@wdio/devtools-service": "^5.16.16",
+		"@wdio/local-runner": "^5.18.0",
+		"@wdio/mocha-framework": "^5.16.15",
+		"@wdio/spec-reporter": "^5.16.11",
+		"@wdio/sync": "^5.17.0",
 		"acorn": "^6.0.7",
 		"autoprefixer": "^9.6.1",
 		"babel-eslint": "^10.0.1",
@@ -102,6 +109,7 @@
 		"chai": "^3.5.0",
 		"chai-datetime": "^1.5.0",
 		"chimp": "^0.51.1",
+		"chromedriver": "^79.0.0",
 		"emojione-assets": "^4.5.0",
 		"eslint": "^5.9.0",
 		"eslint-plugin-react": "^7.14.3",
@@ -120,16 +128,22 @@
 		"postcss-nested": "^4.1.0",
 		"postcss-selector-not": "^4.0.0",
 		"progress": "^2.0.2",
+		"protractor": "^5.4.3",
 		"proxyquire": "^2.1.0",
 		"simple-git": "^1.107.0",
 		"stylelint": "^9.9.0",
 		"stylelint-order": "^2.0.0",
 		"supertest": "^3.3.0",
+		"wdio-chromedriver-service": "^5.0.2",
 		"webpack": "^4.29.3"
 	},
 	"dependencies": {
 		"@accounts/mongo": "0.0.12",
 		"@accounts/server": "0.0.18",
+		"@babel/cli": "^7.7.7",
+		"@babel/core": "^7.7.7",
+		"@babel/preset-env": "^7.7.7",
+		"@babel/register": "^7.7.7",
 		"@babel/runtime": "^7.2.0",
 		"@google-cloud/language": "^2.0.0",
 		"@google-cloud/storage": "^2.3.1",
@@ -175,6 +189,7 @@
 		"gridfs-stream": "^1.1.1",
 		"he": "^1.2.0",
 		"highlight.js": "^9.13.1",
+		"http-proxy": "^1.18.0",
 		"iconv-lite": "^0.4.24",
 		"image-size": "^0.6.3",
 		"imap": "^0.8.19",
@@ -257,6 +272,18 @@
 			".docker/Dockerfile",
 			".docker/Dockerfile.rhel",
 			"app/utils/rocketchat.info"
+		]
+	},
+	"babel": {
+		"presets": [
+			[
+				"@babel/preset-env",
+				{
+					"targets": {
+						"node": "current"
+					}
+				}
+			]
 		]
 	},
 	"browserslist": [
