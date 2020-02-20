@@ -77,7 +77,7 @@ function setLastMessageTs(instance, ts) {
 	}, 60000);
 }
 
-function getConfig(e) {
+var getConfig = function(e) {
 	const canLeave = () => {
 		const roomData = Session.get(`roomData${ this.rid }`);
 
@@ -223,7 +223,7 @@ Template.sidebarItem.events({
 		e.stopPropagation(); // to not close the menu
 		e.preventDefault();
 
-		const config = getConfig(e);
+		const config = getConfig.call(this, e);
 		popover.open(config);
 	},
 });
