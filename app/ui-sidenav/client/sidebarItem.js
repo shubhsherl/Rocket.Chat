@@ -207,7 +207,7 @@ Template.sidebarItem.events({
 			return;
 		}
 
-		const config = getConfig(e);
+		const config = getConfig.call(this, e);
 
 		const doLongTouch = () => {
 			popover.open(config);
