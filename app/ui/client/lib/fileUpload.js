@@ -229,7 +229,6 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 
 	const replies = $(input).data('reply') || [];
 	const mention = $(input).data('mention-user') || false;
-
 	let msg = '';
 
 	if (!mention || !threadsEnabled) {
