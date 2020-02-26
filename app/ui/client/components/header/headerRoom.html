@@ -20,12 +20,12 @@
 						{{> icon block="rc-header__icon" icon=toggleFavoriteButtonIcon}}
 					</button>
 				</div>
+			{{/if}}
 
-				{{#if $and isDiscussion isNotMobile}}
-					<div class="rc-header__block rc-header__block--action js-open-parent-channel rc-tooltip rc-tooltip--down rc-tooltip--start" aria-label={{_ "Back_to_room"}}>
-						<span class="rc-header__first-icon">{{> icon block="rc-header__icon rc-header__icon" icon="back"}}</span>
-					</div>
-				{{/if}}
+			<!-- TODO: fix it style and helper -->
+			{{#if tokenAccessChannel}}
+				<i class="icon-tokenpass" aria-label="{{_ "Tokenpass_Channel_Label"}}"></i>
+			{{/if}}
 
 			<div class="rc-header__content rc-header__block">
 				{{#if isDirect}}
@@ -33,47 +33,38 @@
 					<div class="rc-header__image">
 						{{> avatar url=avatarBackground}}
 					</div>
+				</div>
 				{{/if}}
 
-				<!-- TODO: fix it style and helper -->
-				{{#if tokenAccessChannel}}
-					<i class="icon-tokenpass" aria-label="{{_ "Tokenpass_Channel_Label"}}"></i>
-				{{/if}}
+				<div class="rc-header__data">
+					{{#unless secondaryName}}
+					<div class="rc-header__name">{{> icon block="rc-header__icon" icon=roomIcon}}{{roomName}}</div>
+					{{else}}
+					<div class="rc-header__name">{{roomName}} <div class="rc-header__username">@{{secondaryName}}</div></div>
+					{{/unless}}
 
 					{{#if hasPresence}}
 					{{# userPresence uid=uid}}<span class="rc-header__status">
 						<div class="rc-header__status-bullet rc-header__status-bullet--{{userStatus}}" title="{{_ userStatus}}"></div>
 						<div class="rc-header__visual-status">{{userStatusText}}</div>
-					</span>{{/userPresence}}
+					</span>
 					{{else}}
 					{{#if roomTopic}}<span class="rc-header__topic">{{{roomTopic}}}</span>{{/if}}
 					{{/if}}
 				</div>
 
-				{{#if isSection}}
-				<span class="rc-header__block">{{_ sectionName}}</span>
+				{{#if sentimentSmile}}
+				<span class="sentiment">{{sentimentSmile}}</span>
 				{{/if}}
-				{{#if encryptionState}}
-				<div class="rc-header__block rc-header__block-action rc-header__encryption">
-					<div class="rc-room-actions">
-						<button aria-label="{{_ 'E2E_Enabled'}}" class="rc-tooltip rc-tooltip--down rc-room-actions__action tab-button rc-header__toggle-encryption js-toggle-encryption {{encryptionState}}">{{> icon icon="key"}}</button>
-					</div>
-				</div>
-				{{/if}}
-				{{#if showSearchButton}}
-					{{#with getSearchButton}}
-						<div class="rc-header__block rc-header__search-button">
-							<button type="button" class="js-open-search rc-header__search-button__action">
-								{{> icon block="rc-header__icon rc-header__search-button__action__icon" icon=icon}}
-							</button>
-						</div>
-					{{/with}}
-				{{/if}}
-				{{#if Template.contentBlock}}
-					{{> Template.contentBlock}}
+				{{#if isTranslated}}
+				<i class="icon-language" aria-label="{{_ "Translated"}}"></i>
 				{{/if}}
 			</div>
 			</div>
-		</header>
-    {{/if}}
+			{{/if}}
+			{{#if Template.contentBlock}}
+				{{> Template.contentBlock}}
+			{{/if}}
+		</div>
+	</header>
 </template>
