@@ -476,9 +476,7 @@
 
 		&__data {
 			display: flex;
-			flex-direction: row;
-
-			justify-content: center;
+			flex-direction: column;
 		}
 
 		&__status {
