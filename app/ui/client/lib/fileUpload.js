@@ -1,10 +1,11 @@
+import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { Random } from 'meteor/random';
 import { Session } from 'meteor/session';
 import s from 'underscore.string';
 import { Handlebars } from 'meteor/ui';
-import { Random } from 'meteor/random';
 
+import { fileUploadHandler } from '../../../file-upload';
 import { settings } from '../../../settings/client';
 import { t, fileUploadIsValidContentType, APIClient } from '../../../utils';
 import { modal, prependReplies } from '../../../ui-utils';
