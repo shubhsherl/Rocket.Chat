@@ -8,8 +8,8 @@ const storage = {
 	db: 'localforage',
 	transaction: 'keyvaluepairs',
 	store: 'chatMessage',
-}
-let message = `message on ${ Date.now() }`;
+};
+const message = `message on ${ Date.now() }`;
 let currentTest = 'none';
 
 function isOfflineMsg(msg, message, action) {
@@ -21,7 +21,7 @@ function isOnlineMsg(msg, message) {
 }
 
 function getMsgFromIndexDB(message) {
-	const { value: msgs } = browser.executeAsync(({db, transaction, store}, done) => {
+	const { value: msgs } = browser.executeAsync(({ db, transaction, store }, done) => {
 		indexedDB.open(db).onsuccess = (event) => {
 			const _db = event.target.result;
 			const tx = _db.transaction(transaction);
@@ -34,13 +34,13 @@ function getMsgFromIndexDB(message) {
 				}
 				done(null);
 			};
-		}
+		};
 	}, storage);
 
 	return msgs && msgs.find((msg) => msg.msg === message);
 }
 
-function OfflineMessageTest(message, action) {
+function offlineMessageTest(message, action) {
 	it('it should save the message in localforge', () => {
 		isOfflineMsg(getMsgFromIndexDB(message), message, action).should.be.true;
 	});
@@ -68,7 +68,7 @@ describe('[Message]', () => {
 		sideNav.openChannel('general');
 		currentTest = 'general';
 		// mainContent.sendMessage(message);
-		browser.pause(15000);   // time to cache the process.
+		browser.pause(15000); // time to cache the process.
 		mainContent.offlineMode(true);
 		browser.refresh();
 	});
@@ -80,12 +80,12 @@ describe('[Message]', () => {
 		mainContent.warningAlert.waitForVisible(10000);
 		mainContent.warningAlert.isVisible().should.be.true;
 	});
-	
+
 	describe('Normal message:', () => {
 		after(() => {
 			mainContent.offlineMode(true);
 			browser.refresh();
-		})
+		});
 		it('it should send a message in offline', () => {
 			mainContent.sendMessage(message);
 		});
@@ -95,7 +95,7 @@ describe('[Message]', () => {
 			browser.pause(1000); // wait for the indexedDb to update the message
 		});
 
-		OfflineMessageTest(message, 'send');
+		offlineMessageTest(message, 'send');
 	});
 
 	describe.skip('[Actions]', () => {
@@ -163,8 +163,8 @@ describe('[Message]', () => {
 					mainContent.sendBtn.click();
 					browser.pause(1000);
 				});
-				
-				OfflineMessageTest(`${ message }this message was edited`, 'update');
+
+				offlineMessageTest(`${ message }this message was edited`, 'update');
 			});
 
 			describe('Delete:', () => {
@@ -183,10 +183,8 @@ describe('[Message]', () => {
 					mainContent.lastMessage.getText().should.equal('Message deleted');
 				});
 
-				OfflineMessageTest('Message deleted', 'delete');
+				offlineMessageTest('Message deleted', 'delete');
 			});
-
 		});
 	});
 });
-

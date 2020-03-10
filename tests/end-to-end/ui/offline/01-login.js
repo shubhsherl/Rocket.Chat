@@ -18,7 +18,7 @@ describe('Test login page in Offline', () => {
 		before(() => {
 			browser.pause(1000);
 			loginPage.offlineMode(true);
-            loginPage.open({offline: true});
+			loginPage.open({ offline: true });
 			loginPage.warningAlert.waitForVisible(15000);
 			loginPage.emailOrUsernameField.waitForVisible(15000);
 		});
@@ -202,7 +202,7 @@ describe('Test Registration Page in Offline', () => {
 describe('Test Forgot Password in Offline', () => {
 	before(() => {
 		loginPage.useProxy(true);
-        loginPage.open({offline: true});
+		loginPage.open({ offline: true });
 		loginPage.emailOrUsernameField.waitForVisible(15000);
 		loginPage.gotToForgotPassword();
 	});

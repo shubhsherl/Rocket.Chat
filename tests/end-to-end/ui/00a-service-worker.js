@@ -10,30 +10,30 @@ describe('[Service-Worker]', () => {
 		loginPage.emailOrUsernameField.waitForVisible(15000);
 	});
 
-    it('it should support service worker', () => {
-        const { value } = browser.execute(() => 'serviceWorker' in navigator);
-        value.should.be.true;
-    });
+	it('it should support service worker', () => {
+		const { value } = browser.execute(() => 'serviceWorker' in navigator);
+		value.should.be.true;
+	});
 
 	it('it should be in active state', () => {
-        const { value: { state } } = browser.execute(() => navigator.serviceWorker.controller);
-        state.should.equal('activated');
-    });
+		const { value: { state } } = browser.execute(() => navigator.serviceWorker.controller);
+		state.should.equal('activated');
+	});
 
-    it('it should create the cache storage', () => {
-        const { value } = browser.executeAsync((version, done) => {
-            caches.has(version)
-                .then((exist) => done(exist));
-        }, version);
-        value.should.be.true;
-    });
+	it('it should create the cache storage', () => {
+		const { value } = browser.executeAsync((version, done) => {
+			caches.has(version)
+				.then((exist) => done(exist));
+		}, version);
+		value.should.be.true;
+	});
 
-    it.skip('it should cache the manifest file', () => {
-        const { value } = browser.executeAsync((version, file, done) => {
-            caches.open(version)
-                .then((storage) => storage.match(file)
-                    .then((res) => done(res)));
-        }, version, file);
-        value.status.should.equal(200);
-    });
+	it.skip('it should cache the manifest file', () => {
+		const { value } = browser.executeAsync((version, file, done) => {
+			caches.open(version)
+				.then((storage) => storage.match(file)
+					.then((res) => done(res)));
+		}, version, file);
+		value.status.should.equal(200);
+	});
 });
