@@ -8,7 +8,8 @@ let proxyClosed = true;
 class Page {
 	get body() { return browser.element('body'); }
 
-	open(path) {
+	open(path, {offline = false}) {
+		let port = 3000;
 		browser.windowHandleSize({
 			width: 1600,
 			height: 1600,
