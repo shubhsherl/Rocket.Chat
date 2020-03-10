@@ -118,6 +118,8 @@ class MainContent extends Page {
 	// Popover
 	get popoverWrapper() { return browser.element('.rc-popover'); }
 
+	get warningAlert() { return browser.element('.alert-warning'); }
+
 	// Sends a message and wait for the message to equal the text sent
 	sendMessage(text) {
 		this.setTextToInput(text);

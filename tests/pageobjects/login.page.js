@@ -36,8 +36,10 @@ class LoginPage extends Page {
 
 	get registrationSucceededCard() { return browser.element('#login-card h2'); }
 
-	open() {
-		super.open('');
+	get warningAlert() { return browser.element('.alert-warning'); }
+
+	open(options = {}) {
+		super.open('', options);
 	}
 
 	gotToRegister() {
@@ -52,6 +54,12 @@ class LoginPage extends Page {
 		this.forgotPasswordButton.click();
 		// This Can Cause Timeouts erros if the server is slow so it should have a big wait
 		this.emailField.waitForVisible(15000);
+	}
+
+	gotBackToLogin() {
+		this.backToLoginButton.isVisible();
+		this.backToLoginButton.click();
+		this.emailOrUsernameField.waitForVisible(15000);
 	}
 
 	registerNewUser({ username, email, password }) {
