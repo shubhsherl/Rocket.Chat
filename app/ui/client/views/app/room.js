@@ -99,9 +99,7 @@ const showMessageActions = (e, outerContext) => {
 };
 
 const mountPopover = (e, i, outerContext) => {
-	let context = $(e.target).parents('.message').data('context')
-		|| ($(e.target).parents('.message').hasClass('mentions') && 'mentions');
-
+	let context = $(e.target).parents('.message').data('context');
 	if (!context) {
 		context = 'message';
 	}
