@@ -34,7 +34,7 @@ function messagingTest() {
 		}
 	});
 
-	describe.skip('fileUpload:', () => {
+	describe('fileUpload:', () => {
 		after(() => {
 		});
 		it('it should send a attachment', () => {

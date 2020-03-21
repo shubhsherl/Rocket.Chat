@@ -2,6 +2,7 @@ import mainContent from '../../../pageobjects/main-content.page';
 import sideNav from '../../../pageobjects/side-nav.page';
 import Global from '../../../pageobjects/global';
 import { username, email, password } from '../../../data/user.js';
+import { imgURL } from '../../../data/interactions.js';
 import { checkIfUserIsValid } from '../../../data/checks';
 
 const storage = {
@@ -9,18 +10,35 @@ const storage = {
 	transaction: 'keyvaluepairs',
 	store: 'chatMessage',
 };
+const version = 'viasat-0.1';
 const message = `message on ${ Date.now() }`;
-let currentTest = 'none';
 
 function isOfflineMsg(msg, message, action) {
 	return !!(msg && msg.msg === message && msg.temp && msg.tempActions && msg.tempActions[action]);
+}
+
+function isOfflineAttachment(msg, message, action) {
+	let exist = msg && msg.attachments && msg.attachments[0] && msg.attachments[0].description === message;
+	if (exist) {
+		const { value } = browser.executeAsync((version, file, done) => {
+			caches.open(version)
+				.then((storage) => storage.match(file)
+					.then((res) => done(res)));
+		}, version, msg.attachments[0].image_url);
+		exist = (value.status === 200);
+	}
+	return !!(exist && msg.temp && msg.tempActions && msg.tempActions[action] && msg.uploads && msg.uploads.percentage === 0);
 }
 
 function isOnlineMsg(msg, message) {
 	return !!(msg && msg.msg === message && !msg.temp && !msg.tempActions);
 }
 
-function getMsgFromIndexDB(message) {
+function isOnlineAttachment(msg, message) {
+	return !!(msg && msg.attachments && msg.attachments[0] && msg.attachments[0].description === message && !msg.temp && !msg.tempActions);
+}
+
+function getMsgFromIndexDB(message, attachment = false) {
 	const { value: msgs } = browser.executeAsync(({ db, transaction, store }, done) => {
 		indexedDB.open(db).onsuccess = (event) => {
 			const _db = event.target.result;
@@ -37,7 +55,7 @@ function getMsgFromIndexDB(message) {
 		};
 	}, storage);
 
-	return msgs && msgs.find((msg) => msg.msg === message);
+	return msgs && (attachment ? msgs.find((msg) => msg.attachments && msg.attachments[0] && msg.attachments[0].description === message) : msgs.find((msg) => msg.msg === message));
 }
 
 function offlineMessageTest(message, action) {
@@ -66,8 +84,6 @@ describe('[Message]', () => {
 		mainContent.useProxy(true);
 		checkIfUserIsValid(username, email, password);
 		sideNav.openChannel('general');
-		currentTest = 'general';
-		// mainContent.sendMessage(message);
 		browser.pause(15000); // time to cache the process.
 		mainContent.offlineMode(true);
 		browser.refresh();
@@ -96,6 +112,79 @@ describe('[Message]', () => {
 		});
 
 		offlineMessageTest(message, 'send');
+	});
+
+	describe.skip('fileUpload:', () => {
+		after(() => {
+			mainContent.offlineMode(true);
+			browser.refresh();
+		});
+		it('it should send a attachment', () => {
+			mainContent.fileUpload(imgURL);
+		});
+
+		it('it should show the confirm button', () => {
+			Global.modalConfirm.isVisible().should.be.true;
+		});
+
+		it('it should show the cancel button', () => {
+			Global.modalCancel.isVisible().should.be.true;
+		});
+
+		it('it should show the file preview', () => {
+			Global.modalFilePreview.isVisible().should.be.true;
+		});
+
+		it('it should show the confirm button', () => {
+			Global.modalConfirm.isVisible().should.be.true;
+		});
+
+		it('it should show the file title', () => {
+			Global.modalFileTitle.isVisible().should.be.true;
+		});
+
+		it('it should show the file name input', () => {
+			Global.modalFileName.isVisible().should.be.true;
+		});
+
+		it('it should fill the file name input', () => {
+			Global.modalFileName.setValue('File Name');
+		});
+
+		it('it should show the file name input', () => {
+			Global.modalFileDescription.isVisible().should.be.true;
+		});
+
+		it('it should fill the file name input', () => {
+			Global.modalFileDescription.setValue(message);
+		});
+
+		it('it should click the confirm', () => {
+			Global.modalConfirm.click();
+			Global.modalConfirm.waitForVisible(5000, true);
+		});
+
+		it('it should show the file in the message', () => {
+			mainContent.lastMessageDesc.waitForVisible(10000);
+			mainContent.lastMessageDesc.getText().should.equal(message);
+			browser.pause(1000);
+		});
+		
+		it('it should save the file in localforge', () => {
+			isOfflineAttachment(getMsgFromIndexDB(message, true), message, 'send').should.be.true;
+		});
+
+		it('it should show the file after refresh', () => {
+			browser.refresh();
+			mainContent.lastMessageDesc.waitForVisible(10000);
+			mainContent.lastMessageDesc.getText().should.equal(message);
+		});
+
+		it(`it should send the file after coming online`, () => {
+			mainContent.offlineMode(false);
+			browser.pause(8000); // wait for the indexedDb to update the message + reconnect time
+			isOnlineAttachment(getMsgFromIndexDB(message, true), message).should.be.true;
+		});
 	});
 
 	describe.skip('[Actions]', () => {
@@ -140,11 +229,9 @@ describe('[Message]', () => {
 				mainContent.messageStar.isVisible().should.be.true;
 			});
 
-			if (currentTest === 'general') {
-				it('it should not show the pin action', () => {
-					mainContent.messagePin.isVisible().should.be.false;
-				});
-			}
+			it('it should not show the pin action', () => {
+				mainContent.messagePin.isVisible().should.be.false;
+			});
 
 			it('it should not show the mark as unread action', () => {
 				mainContent.messageUnread.isVisible().should.be.false;
