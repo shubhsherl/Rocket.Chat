@@ -5,25 +5,10 @@ import { Session } from 'meteor/session';
 import s from 'underscore.string';
 import { Handlebars } from 'meteor/ui';
 
-import { fileUploadHandler } from '../../../file-upload';
 import { settings } from '../../../settings/client';
 import { t, fileUploadIsValidContentType, APIClient } from '../../../utils';
 import { modal, prependReplies } from '../../../ui-utils';
 import { sendOfflineFileMessage } from './sendOfflineFileMessage';
-
-const setMsgId = (msgData = {}) => {
-	let id;
-	if (msgData.id) {
-		id = msgData.id;
-	} else {
-		id = Random.id();
-	}
-	return Object.assign({
-		id,
-		msg: '',
-		groupable: false,
-	}, msgData);
-};
 
 const readAsDataURL = (file, callback) => {
 	const reader = new FileReader();
@@ -239,8 +224,8 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 	if (mention && threadsEnabled && replies.length) {
 		tmid = replies[0]._id;
 	}
-	
-	const msgData = setMsgId({ msg, tmid });
+
+	const msgData = { id: Random.id(), msg: msg, tmid: tmid };
 	let offlineFile = null;
 
 	const uploadNextFile = () => {
