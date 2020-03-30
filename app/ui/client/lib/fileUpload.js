@@ -1,4 +1,3 @@
-import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { Random } from 'meteor/random';
 import { Session } from 'meteor/session';
@@ -225,7 +224,7 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 		tmid = replies[0]._id;
 	}
 
-	const msgData = { id: Random.id(), msg: msg, tmid: tmid };
+	const msgData = { id: Random.id(), msg, tmid };
 	let offlineFile = null;
 
 	const uploadNextFile = () => {
