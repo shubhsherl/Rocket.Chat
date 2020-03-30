@@ -1,4 +1,3 @@
-import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { Session } from 'meteor/session';
 import { sortBy } from 'underscore';
@@ -45,16 +44,14 @@ const action = {
 		const { xhr, promise } = APIClient.upload(`v1/rooms.upload/${ msg.rid }`, {}, data, {
 			progress(progress) {
 				if (progress === 100) {
-					SWCache.removeFromCache(msg.file);
 					return;
 				}
 				const uploads = upload;
 				uploads.percentage = Math.round(progress * 100) || 0;
 				ChatMessage.setProgress(msg._id, uploads);
 			},
-			error(error) {
+			error() {
 				ChatMessage.setProgress(msg._id, upload);
-				return;
 			},
 		});
 
@@ -68,13 +65,11 @@ const action = {
 			Session.delete(`uploading-cancel-${ upload.id }`);
 
 			xhr.abort();
-
-			ChatMessage.setProgress(msg._id, upload);
 		});
 
 		try {
 			await promise;
-			console.log('quick done offline');
+			SWCache.removeFromCache(msg.file);
 		} catch (error) {
 			const uploads = upload;
 			uploads.error = (error.xhr && error.xhr.responseJSON && error.xhr.responseJSON.error) || error.message;
