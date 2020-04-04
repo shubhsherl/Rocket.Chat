@@ -75,7 +75,7 @@ export const toolbarSearch = {
 const toolbarButtons = (/* user */) => [{
 	name: t('Home'),
 	icon: 'home',
-	condition: () => settings.get('Layout_Show_Home_Button'),
+	condition: () => !isMobile() && settings.get('Layout_Show_Home_Button'),
 	action: () => {
 		FlowRouter.go('home');
 	},
