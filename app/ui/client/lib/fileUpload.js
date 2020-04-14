@@ -268,6 +268,14 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 				return;
 			}
 
+			const record = {
+				name: document.getElementById('file-name').value || file.name || file.file.name,
+				size: file.file.size,
+				type: file.file.type,
+				rid,
+				description: document.getElementById('file-description').value,
+			};
+
 			const fileName = document.getElementById('file-name').value || file.name || file.file.name;
 
 			uploadFileWithMessage(rid, tmid, {
@@ -277,7 +285,15 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 				file,
 			});
 
-			uploadNextFile();
+			try {
+				await promise;
+				offlineFile && SWCache.removeFromCache(offlineFile);
+			} catch (error) {
+				const uploads = upload;
+				uploads.error = (error.xhr && error.xhr.responseJSON && error.xhr.responseJSON.error) || error.message;
+				uploads.percentage = 0;
+				ChatMessage.setProgress(msgData.id, uploads);
+			}
 		}));
 	};
 
