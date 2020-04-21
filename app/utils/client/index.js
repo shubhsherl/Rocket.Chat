@@ -19,6 +19,8 @@ export { placeholders } from '../lib/placeholders';
 export { templateVarHandler } from '../lib/templateVarHandler';
 export { APIClient, mountArrayQueryParameters } from './lib/RestApiClient';
 export { canDeleteMessage } from './lib/canDeleteMessage';
+export { SWCache } from './lib/swCache';
+export { cleanMessagesAtStartup } from './lib/offlineMessages';
 export { mime } from '../lib/mimeTypes';
 export { secondsToHHMMSS } from '../lib/timeConverter';
 export { isMobile } from './lib/isMobile';
