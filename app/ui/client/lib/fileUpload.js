@@ -284,16 +284,6 @@ export const fileUpload = async (files, input, { rid, tmid }) => {
 				msg: msg || undefined,
 				file,
 			});
-
-			try {
-				await promise;
-				offlineFile && SWCache.removeFromCache(offlineFile);
-			} catch (error) {
-				const uploads = upload;
-				uploads.error = (error.xhr && error.xhr.responseJSON && error.xhr.responseJSON.error) || error.message;
-				uploads.percentage = 0;
-				ChatMessage.setProgress(msgData.id, uploads);
-			}
 		}));
 	};
 
