@@ -69,6 +69,7 @@ import './methods/userSetUtcOffset';
 import './publications/messages';
 import './publications/ownUser';
 import './publications/room';
+import './publications/roles';
 import './publications/settings';
 import './publications/spotlight';
 import './publications/subscription';
