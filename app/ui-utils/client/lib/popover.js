@@ -12,6 +12,7 @@ import { MessageAction } from './MessageAction';
 import { RoomManager } from './RoomManager';
 import { ChatSubscription } from '../../../models/client';
 import { isRtl, handleError } from '../../../utils/client';
+import { createTemplateForComponent } from '../../../../client/reactAdapters';
 
 export const popover = {
 	renderedPopover: null,
@@ -177,6 +178,19 @@ Template.popover.events({
 			popover.close();
 			return false;
 		}
+	},
+	'click [data-type="sort-action"]'(e) {
+		popover.close();
+		const options = [];
+		const config = {
+			template: createTemplateForComponent('SortList', () => import('../../../ui-sidenav/client/SortList')),
+			currentTarget: e.currentTarget,
+			data: {
+				options,
+			},
+			offsetVertical: e.currentTarget.clientHeight + 10,
+		};
+		popover.open(config);
 	},
 	'click [data-type="share-action"]'(e) {
 		if (isShareAvailable()) {
