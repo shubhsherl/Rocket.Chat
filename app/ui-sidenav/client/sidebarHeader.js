@@ -191,6 +191,12 @@ const toolbarButtons = (/* user */) => [{
 			};
 		}
 
+		const shareOption = {
+			name: t('Share'),
+			icon: 'share',
+			type: 'share-action',
+		};
+
 		const sortOption = {
 			name: t('Sort'),
 			icon: 'sort',
@@ -251,6 +257,7 @@ const toolbarButtons = (/* user */) => [{
 		if (isMobile()) {
 			config.columns[0].groups[0].items = config.columns[0].groups[0].items.concat([sortOption, directoryOption]);
 		}
+		config.columns[0].groups[0].items = config.columns[0].groups[0].items.concat([shareOption]);
 		popover.open(config);
 	},
 }];

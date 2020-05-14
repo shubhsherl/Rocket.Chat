@@ -21,4 +21,5 @@ export { APIClient, mountArrayQueryParameters } from './lib/RestApiClient';
 export { canDeleteMessage } from './lib/canDeleteMessage';
 export { mime } from '../lib/mimeTypes';
 export { secondsToHHMMSS } from '../lib/timeConverter';
+export { share, isShareAvailable, getShareData } from './lib/share';
 export { isMobile } from './lib/isMobile';
