@@ -5,6 +5,7 @@ import { Icon, ToggleSwitch, RadioButton, Box, Flex, Margins } from '@rocket.cha
 import { useTranslation } from '../../../client/contexts/TranslationContext';
 import { useUserPreference } from '../../../client/contexts/UserContext';
 import { useMethod } from '../../../client/contexts/ServerContext';
+import { isMobile } from '../../utils';
 
 function SortListItem({ text, icon, input }) {
 	return <Flex.Container>
@@ -34,7 +35,7 @@ export function SortList() {
 	return <>
 		<div className='rc-popover__column'>
 			<SortModeList/>
-			<ViewModeList/>
+			{isMobile() ? null : <ViewModeList/>}
 			<GroupingList/>
 		</div>
 	</>;
