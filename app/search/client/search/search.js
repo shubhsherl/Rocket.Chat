@@ -80,8 +80,8 @@ Template.RocketSearch.onCreated(function() {
 });
 
 Template.RocketSearch.events = {
-	'click .js-close-search'() {
-		Session.set('openSearchPage', !Session.get('openSearchPage'));
+	'click .js-close-search'(e, t) {
+		t.data.tabBar.close();
 	},
 	'keydown #message-search'(evt, t) {
 		if (evt.keyCode === 13) {

@@ -51,6 +51,11 @@ const openMembersListTab = (instance, group) => {
 	instance.tabBar.open();
 };
 
+const openSearchTab = (instance) => {
+	instance.tabBar.setTemplate('RocketSearch');
+	instance.tabBar.open();
+};
+
 const openProfileTab = (e, instance, username) => {
 	if (Layout.isEmbedded()) {
 		fireGlobalEvent('click-user-card-message', { username });
@@ -277,14 +282,6 @@ export const dropzoneHelpers = {
 
 Template.room.helpers({
 	...dropzoneHelpers,
-
-	openSearchPage() {
-		if (!isMobile()) {
-			return false;
-		}
-		return Session.get('openSearchPage');
-	},
-
 	isTranslated() {
 		const { state } = Template.instance();
 		return settings.get('AutoTranslate_Enabled')
@@ -793,6 +790,10 @@ Template.room.events({
 		});
 	},
 
+	'click .js-open-search'(event, instance) {
+		openSearchTab(instance);
+	},
+
 	'click .user-image, click .rc-member-list__user'(e, instance) {
 		if (!Meteor.userId()) {
 			return;
@@ -1019,7 +1020,6 @@ Template.room.events({
 Template.room.onCreated(function() {
 	// this.scrollOnBottom = true
 	// this.typing = new msgTyping this.data._id
-	Session.set('openSearchPage', false);
 
 	const rid = this.data._id;
 
@@ -1192,8 +1192,6 @@ Template.room.onDestroyed(function() {
 });
 
 Template.room.onRendered(function() {
-	Session.set('openSearchPage', false);
-
 	const { _id: rid } = this.data;
 
 	if (!chatMessages[rid]) {

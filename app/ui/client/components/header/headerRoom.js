@@ -40,12 +40,6 @@ Template.headerRoom.helpers({
 	toggleFavoriteButtonIconLabel: () => (Template.instance().state.get('favorite') ? t('Unfavorite') : t('Favorite')),
 	toggleFavoriteButtonIcon: () => (Template.instance().state.get('favorite') ? 'star-filled' : 'star'),
 	showSearchButton: () => isMobile(),
-	openSearchPage() {
-		if (!isMobile()) {
-			return;
-		}
-		return Session.get('openSearchPage');
-	},
 	uid() {
 		return getUidDirectMessage(this._id);
 	},
@@ -155,14 +149,6 @@ Template.headerRoom.helpers({
 });
 
 Template.headerRoom.events({
-	'click .js-open-search'() {
-		if (!Session.get('openSearchPage')) {
-			Session.set('openSearchPage', true);
-		} else {
-			Session.set('openSearchPage', false);
-		}
-	},
-
 	'click .iframe-toolbar .js-iframe-action'(e) {
 		fireGlobalEvent('click-toolbar-button', { id: this.id });
 		e.currentTarget.querySelector('button').blur();
@@ -231,7 +217,6 @@ const loadUserStatusText = () => {
 
 Template.headerRoom.onCreated(function() {
 	this.state = new ReactiveDict();
-	Session.set('openSearchPage', false);
 	const isFavoritesEnabled = () => settings.get('Favorite_Rooms');
 
 	const isDiscussion = (rid) => {

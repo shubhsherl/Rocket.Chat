@@ -16,13 +16,6 @@
 	flex: 1;
 }
 
-.back-button {
-	position: relative;
-	top: 36px;
-
-	padding-left: 24px;
-}
-
 .rocket-default-search-results {
 	overflow: auto;
 	overflow-x: hidden;
@@ -79,4 +72,11 @@
 .rocket-search-suggestion-item:hover {
 	color: white;
 	background-color: var(--button-primary-background);
+}
+
+@media (width <= 500px) {
+	.back-button,
+	.search-form {
+		display: inline-block;
+	}
 }
