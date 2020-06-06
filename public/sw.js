@@ -1,5 +1,7 @@
 const HTMLToCache = '/';
 const version = 'viasat-0.1';
+const storeName = "post_requests";
+let db;
 
 function removeHash(element) {
 	if (typeof element === 'string') { return element.split('?hash=')[0]; }
@@ -13,6 +15,118 @@ function hasSameHash(firstUrl, secondUrl) {
 	if (typeof firstUrl === 'string' && typeof secondUrl === 'string') {
 		return /\?hash=(.*)/.exec(firstUrl)[1] === /\?hash=(.*)/.exec(secondUrl)[1];
 	}
+}
+
+function JSONtoArray(obj) {
+	if (typeof obj !== 'object') {
+		return [obj];
+	}
+
+	let keys = [];
+	for (const key in obj) {
+		const children = JSONtoArray(obj[key]);
+		children.forEach((child) => {
+			keys.push({ [key]: child });
+		});
+	}
+
+	return keys;
+}
+
+function arrayToJSON(objArray) {
+	let result = {};
+
+	const updateObject = (obj, result) => {
+		const key = Object.keys(obj)[0];
+		result[key] = (key in result) ? updateObject(obj[key], result[key]) : obj[key];
+		return result;
+	}
+
+	objArray.forEach((obj) => {
+		result = updateObject(obj, result);
+	});
+
+	return result;
+}
+
+async function openDatabase() {
+	return new Promise((resolve, reject) => {
+		const indexedDBOpenRequest = indexedDB.open('post-cache');
+
+		indexedDBOpenRequest.onerror = () => {
+			console.log('IndexedDb error');
+			reject();
+		}
+		indexedDBOpenRequest.onupgradeneeded = function () {
+			this.result.createObjectStore(storeName, { autoIncrement: true, keyPath: 'id' });
+			resolve();
+		}
+	
+		indexedDBOpenRequest.onsuccess = function () {
+			db = this.result;
+			resolve();
+		}
+	});
+}
+
+function getObjectStore(readwrite = true) {
+	return db.transaction(storeName, readwrite ? "readwrite" : "readonly").objectStore(storeName);
+}
+
+function savePostRequest(url, payload, response) {
+	const keys = JSONtoArray(payload);
+	const value = JSONtoArray(response);
+	keys.forEach((key, idx) => {
+		getObjectStore().put({
+			url: url,
+			id: JSON.stringify(key),
+			response: value[idx],
+		});
+	});
+}
+
+function getPostResponse(payload) {
+	return new Promise((resolve) => {
+		let responses = [];
+		const keys = JSONtoArray(payload);
+		keys.forEach(async (key, idx) => {
+			await new Promise(next => {
+				const getRequest = getObjectStore(false).get(JSON.stringify(key));
+				getRequest.onsuccess = function (event) {
+					event.target.result && responses.push(event.target.result.response);
+					next();
+				}
+				getRequest.onerror = function (error) {
+					console.log(error);
+					next();
+				}
+			});
+			if (idx === keys.length - 1) {
+				responses = arrayToJSON(responses);
+				const blob = new Blob([JSON.stringify(responses)], { type: 'application/json' });
+				resolve(new Response(blob, { status: 200, statusText: 'OK' }));
+			}
+		});
+	});
+}
+
+function handlePOST(event) {
+	const requestToFetch = event.request.clone();
+	event.respondWith(fetch(requestToFetch, { method: 'POST' })
+		.then(async (response) => {
+			await openDatabase();
+			const clonedResponse = response.clone();
+			const formData = await event.request.json();
+			const body = await clonedResponse.json();
+			savePostRequest(requestToFetch.url, formData, body);
+			return response;
+		})
+		.catch(async (error) => {
+			await openDatabase();
+			const formData = await event.request.json();
+			return getPostResponse(formData);
+		})
+	);
 }
 
 self.addEventListener('install', (event) => {
@@ -39,6 +153,9 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
 	if (event.request.method === 'POST') {
+		if (/__meteor__\/dynamic-import/.test(event.request.url)) {
+			handlePOST(event);
+		}
 		return;
 	}
 
