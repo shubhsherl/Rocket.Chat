@@ -1,6 +1,6 @@
 const HTMLToCache = '/';
 const version = 'viasat-0.1';
-const storeName = "post_requests";
+const storeName = 'post_requests';
 let db;
 
 function removeHash(element) {
@@ -17,30 +17,32 @@ function hasSameHash(firstUrl, secondUrl) {
 	}
 }
 
-function JSONtoArray(obj) {
+function jsonToArray(obj) {
 	if (typeof obj !== 'object') {
 		return [obj];
 	}
 
-	let keys = [];
+	const keys = [];
 	for (const key in obj) {
-		const children = JSONtoArray(obj[key]);
-		children.forEach((child) => {
-			keys.push({ [key]: child });
-		});
+		if (obj.hasOwnProperty(key)) {
+			const children = jsonToArray(obj[key]);
+			children.forEach((child) => {
+				keys.push({ [key]: child });
+			});
+		}
 	}
 
 	return keys;
 }
 
-function arrayToJSON(objArray) {
+function arrayToJson(objArray) {
 	let result = {};
 
 	const updateObject = (obj, result) => {
 		const key = Object.keys(obj)[0];
-		result[key] = (key in result) ? updateObject(obj[key], result[key]) : obj[key];
+		result[key] = key in result ? updateObject(obj[key], result[key]) : obj[key];
 		return result;
-	}
+	};
 
 	objArray.forEach((obj) => {
 		result = updateObject(obj, result);
@@ -56,29 +58,29 @@ async function openDatabase() {
 		indexedDBOpenRequest.onerror = () => {
 			console.log('IndexedDb error');
 			reject();
-		}
-		indexedDBOpenRequest.onupgradeneeded = function () {
+		};
+		indexedDBOpenRequest.onupgradeneeded = function() {
 			this.result.createObjectStore(storeName, { autoIncrement: true, keyPath: 'id' });
 			resolve();
-		}
-	
-		indexedDBOpenRequest.onsuccess = function () {
+		};
+
+		indexedDBOpenRequest.onsuccess = function() {
 			db = this.result;
 			resolve();
-		}
+		};
 	});
 }
 
 function getObjectStore(readwrite = true) {
-	return db.transaction(storeName, readwrite ? "readwrite" : "readonly").objectStore(storeName);
+	return db.transaction(storeName, readwrite ? 'readwrite' : 'readonly').objectStore(storeName);
 }
 
 function savePostRequest(url, payload, response) {
-	const keys = JSONtoArray(payload);
-	const value = JSONtoArray(response);
+	const keys = jsonToArray(payload);
+	const value = jsonToArray(response);
 	keys.forEach((key, idx) => {
 		getObjectStore().put({
-			url: url,
+			url,
 			id: JSON.stringify(key),
 			response: value[idx],
 		});
@@ -88,21 +90,21 @@ function savePostRequest(url, payload, response) {
 function getPostResponse(payload) {
 	return new Promise((resolve) => {
 		let responses = [];
-		const keys = JSONtoArray(payload);
+		const keys = jsonToArray(payload);
 		keys.forEach(async (key, idx) => {
-			await new Promise(next => {
+			await new Promise((next) => {
 				const getRequest = getObjectStore(false).get(JSON.stringify(key));
-				getRequest.onsuccess = function (event) {
+				getRequest.onsuccess = function(event) {
 					event.target.result && responses.push(event.target.result.response);
 					next();
-				}
-				getRequest.onerror = function (error) {
+				};
+				getRequest.onerror = function(error) {
 					console.log(error);
 					next();
-				}
+				};
 			});
 			if (idx === keys.length - 1) {
-				responses = arrayToJSON(responses);
+				responses = arrayToJson(responses);
 				const blob = new Blob([JSON.stringify(responses)], { type: 'application/json' });
 				resolve(new Response(blob, { status: 200, statusText: 'OK' }));
 			}
@@ -121,11 +123,11 @@ function handlePOST(event) {
 			savePostRequest(requestToFetch.url, formData, body);
 			return response;
 		})
-		.catch(async (error) => {
+		.catch(async () => {
 			await openDatabase();
 			const formData = await event.request.json();
 			return getPostResponse(formData);
-		})
+		}),
 	);
 }
 
