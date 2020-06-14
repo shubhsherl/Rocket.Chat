@@ -21,7 +21,7 @@ export const BurgerMenuButton = (props) => {
 		className={[
 			'rc-old',
 			'burger',
-			!!isSidebarOpen && 'menu-opened',
+			'menu-opened',
 		].filter(Boolean).join(' ')}
 		type='button'
 		onClick={handleClick}
