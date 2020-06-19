@@ -333,10 +333,13 @@ Template.messagePopup.events({
 			return;
 		}
 		const template = Template.instance();
+		const wasMenuIconClicked = e.target.classList.contains('sidebar-item__menu-icon');
 		template.clickingItem = false;
-		template.value.set(this._id);
-		template.enterValue();
-		template.open.set(false);
+		if (!wasMenuIconClicked) {
+			template.value.set(this._id);
+			template.enterValue();
+			template.open.set(false);
+		}
 	},
 });
 

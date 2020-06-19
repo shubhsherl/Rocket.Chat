@@ -107,6 +107,8 @@ Template.DefaultSearchResultTemplate.helpers({
 		return Template.instance().hasMore.get();
 	},
 	messageParse(msg) {
+		const text = Template.instance().data.text.get();
+		msg.searchedText = text;
 		return { customClass: 'search', actionContext: 'search', ...msg, groupable: false };
 	},
 	messageContext,

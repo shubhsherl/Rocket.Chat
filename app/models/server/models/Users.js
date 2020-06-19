@@ -30,7 +30,7 @@ export class Users extends Base {
 
 		this.tryEnsureIndex({ roles: 1 }, { sparse: 1 });
 		this.tryEnsureIndex({ name: 1 });
-		this.tryEnsureIndex({ name: 'text', username: 'text', bio: 'text' }, { default_language: 'none', language_override: 'documentLanguage' });
+		this.tryEnsureIndex({ bio: 1 });
 		this.tryEnsureIndex({ createdAt: 1 });
 		this.tryEnsureIndex({ lastLogin: 1 });
 		this.tryEnsureIndex({ status: 1 });
@@ -124,10 +124,10 @@ export class Users extends Base {
 		return this.findOne(query);
 	}
 
-	findOneOnlineAgentByUsername(username) {
+	findOneOnlineAgentByUsername(username, options) {
 		const query = queryStatusAgentOnline({ username });
 
-		return this.findOne(query);
+		return this.findOne(query, options);
 	}
 
 	findOneOnlineAgentById(_id) {
@@ -523,7 +523,7 @@ export class Users extends Base {
 	}
 
 	findOneByEmailAddress(emailAddress, options) {
-		const query = { 'emails.address': new RegExp(`^${ s.escapeRegExp(emailAddress) }$`, 'i') };
+		const query = { 'emails.address': String(emailAddress).trim().toLowerCase() };
 
 		return this.findOne(query, options);
 	}
@@ -545,6 +545,27 @@ export class Users extends Base {
 
 	findOneById(userId, options) {
 		const query = { _id: userId };
+
+		return this.findOne(query, options);
+	}
+
+	findOneActiveById(userId, options) {
+		const query = {
+			_id: userId,
+			active: true,
+		};
+
+		return this.findOne(query, options);
+	}
+
+	findOneByIdOrUsername(idOrUsername, options) {
+		const query = {
+			$or: [{
+				_id: idOrUsername,
+			}, {
+				username: idOrUsername,
+			}],
+		};
 
 		return this.findOne(query, options);
 	}
@@ -611,7 +632,30 @@ export class Users extends Base {
 		return this.find({
 			active: true,
 			type: { $nin: ['app'] },
+			roles: { $ne: ['guest'] },
 		}, options);
+	}
+
+	findActiveLocalGuests(idExceptions = [], options = {}) {
+		const query = {
+			active: true,
+			type: { $nin: ['app'] },
+			roles: {
+				$eq: 'guest',
+				$size: 1,
+			},
+			isRemote: { $ne: true },
+		};
+
+		if (idExceptions) {
+			if (!_.isArray(idExceptions)) {
+				idExceptions = [idExceptions];
+			}
+
+			query._id = { $nin: idExceptions };
+		}
+
+		return this.find(query, options);
 	}
 
 	findByActiveUsersExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery = []) {
@@ -641,10 +685,7 @@ export class Users extends Base {
 		const searchFields = forcedSearchFields || settings.get('Accounts_SearchFields').trim().split(',');
 
 		const orStmt = _.reduce(searchFields, function(acc, el) {
-			el = el.trim();
-			if (el && !['name', 'username', 'bio'].includes(el)) {
-				acc.push({ [el]: termRegex });
-			}
+			acc.push({ [el.trim()]: termRegex });
 			return acc;
 		}, []);
 
@@ -652,10 +693,8 @@ export class Users extends Base {
 			$and: [
 				{
 					active: true,
-					$or: [{
-						$text: { $search: searchTerm },
-					}, ...orStmt],
 					username: { $exists: true, $nin: exceptions },
+					$or: orStmt,
 				},
 				...extraQuery,
 			],
@@ -829,7 +868,11 @@ export class Users extends Base {
 	}
 
 	findActiveRemote(options = {}) {
-		return this.find({ active: true, isRemote: true }, options);
+		return this.find({
+			active: true,
+			isRemote: true,
+			roles: { $ne: ['guest'] },
+		}, options);
 	}
 
 	getSAMLByIdAndSAMLProvider(_id, provider) {
@@ -978,20 +1021,22 @@ export class Users extends Base {
 		return this.update(_id, update);
 	}
 
-	setAvatarOrigin(_id, origin) {
+	setAvatarData(_id, origin, etag) {
 		const update = {
 			$set: {
 				avatarOrigin: origin,
+				avatarETag: etag,
 			},
 		};
 
 		return this.update(_id, update);
 	}
 
-	unsetAvatarOrigin(_id) {
+	unsetAvatarData(_id) {
 		const update = {
 			$unset: {
 				avatarOrigin: 1,
+				avatarETag: 1,
 			},
 		};
 
@@ -1365,6 +1410,10 @@ Find users to send a message by email if:
 
 	getActiveLocalUserCount() {
 		return this.findActive().count() - this.findActiveRemote().count();
+	}
+
+	getActiveLocalGuestCount(idExceptions = []) {
+		return this.findActiveLocalGuests(idExceptions).count();
 	}
 
 	removeOlderResumeTokensByUserId(userId, fromDate) {

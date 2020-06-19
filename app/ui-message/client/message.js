@@ -3,6 +3,7 @@ import s from 'underscore.string';
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { Template } from 'meteor/templating';
+import { Session } from 'meteor/session';
 import { TAPi18n } from 'meteor/rocketchat:tap-i18n';
 import { Session } from 'meteor/session';
 
@@ -20,6 +21,7 @@ import './messageThread.html';
 import { AutoTranslate } from '../../autotranslate/client';
 
 const renderBody = (msg, settings, runMarkdown = true, markdownFn = null) => {
+	const searchedText = msg.searchedText ? msg.searchedText : '';
 	const isSystemMessage = MessageTypes.isSystemMessage(msg);
 	const messageType = MessageTypes.getType(msg) || {};
 
@@ -41,6 +43,11 @@ const renderBody = (msg, settings, runMarkdown = true, markdownFn = null) => {
 	if (isSystemMessage) {
 		// msg.html = Markdown.parse(msg.html);
 	}
+
+	if (searchedText) {
+		msg = msg.replace(new RegExp(searchedText, 'gi'), (str) => `<mark>${ str }</mark>`);
+	}
+
 	return msg;
 };
 
@@ -55,9 +62,6 @@ Template.message.helpers({
 			Session.set('refreshMessages', true);
 		});
 		return Session.get(msg._id);
-	},
-	and(a, b) {
-		return a && b;
 	},
 	i18nReplyCounter() {
 		const { msg } = this;
@@ -134,6 +138,10 @@ Template.message.helpers({
 		if (msg.avatar != null && msg.avatar[0] === '@') {
 			return msg.avatar.replace(/^@/, '');
 		}
+	},
+	getStatus() {
+		const { msg } = this;
+		return Session.get(`user_${ msg.u.username }_status_text`);
 	},
 	getName() {
 		const { msg, settings } = this;
@@ -388,6 +396,10 @@ Template.message.helpers({
 	parentMessage() {
 		const { msg: { threadMsg } } = this;
 		return threadMsg;
+	},
+	showStar() {
+		const { msg } = this;
+		return msg.starred && !(msg.actionContext === 'starred' || this.context === 'starred');
 	},
 });
 
