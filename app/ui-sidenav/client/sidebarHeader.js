@@ -271,12 +271,8 @@ const toolbarButtons = (user) => [{
 				type: 'open',
 				id: 'administration',
 				action: () => {
-					import('../../ui-admin/client').then(() => {
-						SideNav.setFlex('adminFlex');
-						SideNav.openFlex();
-						FlowRouter.go('admin', { group: 'info' });
-						popover.close();
-					});
+					FlowRouter.go('admin', { group: 'info' });
+					popover.close();
 				},
 			};
 		}
