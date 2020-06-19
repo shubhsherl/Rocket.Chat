@@ -29,7 +29,6 @@ import '../app/importer-hipchat/client';
 import '../app/importer-hipchat-enterprise/client';
 import '../app/importer-slack/client';
 import '../app/importer-slack-users/client';
-import '../app/invites/client';
 // import '../app/integrations/client';
 import '../app/integrations/client/startup';
 import '../app/issuelinks/client';

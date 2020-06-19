@@ -5,7 +5,6 @@ import { Tracker } from 'meteor/tracker';
 import { Template } from 'meteor/templating';
 import { Session } from 'meteor/session';
 import { TAPi18n } from 'meteor/rocketchat:tap-i18n';
-import { Session } from 'meteor/session';
 
 import { timeAgo, formatDateAndTime } from '../../lib/client/lib/formatDate';
 import { DateFormat } from '../../lib/client';
