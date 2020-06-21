@@ -96,7 +96,7 @@ export const MarkdownMessage = (message) => {
 	return message;
 };
 
-const filterMarkdown = (message) => Markdown.filterMarkdownFromMessage(message);
+export const filterMarkdown = (message) => Markdown.filterMarkdownFromMessage(message);
 
 callbacks.add('renderMessage', MarkdownMessage, callbacks.priority.HIGH, 'markdown');
 callbacks.add('renderNotification', filterMarkdown, callbacks.priority.HIGH, 'filter-markdown');

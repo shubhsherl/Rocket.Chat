@@ -151,6 +151,11 @@
 				{{#with flexData}}
 					{{> contextualBar}}
 				{{/with}}
+				{{# unless shouldCloseFlexTab}}
+					{{#with flexData}}
+						{{> contextualBar}}
+					{{/with}}
+				{{/unless}}
 			</div>
 		</section>
 	</div>
