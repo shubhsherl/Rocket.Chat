@@ -25,7 +25,7 @@ import { callbacks } from '../../../callbacks';
 // 	};
 // };
 
-export const renderMessageBody = mem((message, runMarkdown = true, markdownFn = null) => {
+export const renderMessageBody = (message, runMarkdown = true, markdownFn = null) => {
 	message.html = s.trim(message.msg) ? s.escapeHTML(message.msg) : '';
 	let tokens;
 	let html;
@@ -36,4 +36,4 @@ export const renderMessageBody = mem((message, runMarkdown = true, markdownFn = 
 	}
 	return (Array.isArray(tokens) ? tokens.reverse() : [])
 		.reduce((html, { token, text }) => html.replace(token, () => text), html);
-};
+}
