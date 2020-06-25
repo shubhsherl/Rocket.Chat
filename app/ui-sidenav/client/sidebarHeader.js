@@ -179,7 +179,7 @@ const toolbarButtons = (user) => [{
 	action: async (e) => {
 		const options = [];
 		const config = {
-			template: createTemplateForComponent('SortList', () => import('./SortList')),
+			template: createTemplateForComponent('SortList', () => import('../../../client/components/SortList')),
 			currentTarget: e.currentTarget,
 			data: {
 				options,
@@ -271,12 +271,8 @@ const toolbarButtons = (user) => [{
 				type: 'open',
 				id: 'administration',
 				action: () => {
-					import('../../ui-admin/client').then(() => {
-						SideNav.setFlex('adminFlex');
-						SideNav.openFlex();
-						FlowRouter.go('admin', { group: 'info' });
-						popover.close();
-					});
+					FlowRouter.go('admin', { group: 'info' });
+					popover.close();
 				},
 			};
 		}
