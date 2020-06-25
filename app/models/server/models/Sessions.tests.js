@@ -239,7 +239,7 @@ describe('Sessions Aggregates', () => {
 		before(function() {
 			this.timeout(120000);
 			return mongoUnit.start({ version: '3.2.22' })
-				.then((testMongoUrl) => { process.env.MONGO_URL = testMongoUrl; });
+				.then((testMongoUrl) => { process.env.MONGO_URL = testMongoUrl || mongoUnit.getUrl(); });
 		});
 
 		after(() => { mongoUnit.stop(); });
