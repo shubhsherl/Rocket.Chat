@@ -36,4 +36,4 @@ export const renderMessageBody = (message, runMarkdown = true, markdownFn = null
 	}
 	return (Array.isArray(tokens) ? tokens.reverse() : [])
 		.reduce((html, { token, text }) => html.replace(token, () => text), html);
-}
+};
