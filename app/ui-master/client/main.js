@@ -181,7 +181,6 @@ Template.main.helpers({
 		const ready = (userReady && subscriptionsReady && settingsReady) || !Meteor.userId();
 
 		CachedCollectionManager.syncEnabled = ready;
-		console.log(ready);
 		mainReady.set(ready);
 
 		return ready;
