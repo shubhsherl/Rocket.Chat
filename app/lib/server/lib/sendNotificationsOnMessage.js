@@ -180,6 +180,7 @@ const project = {
 		mobilePushNotifications: 1,
 		muteGroupMentions: 1,
 		name: 1,
+		rid: 1,
 		userHighlights: 1,
 		'u._id': 1,
 		'receiver.active': 1,
@@ -312,7 +313,7 @@ export async function sendMessageNotifications(message, room, usersInThread = []
 
 export async function sendAllNotifications(message, room) {
 	if (TroubleshootDisableNotifications === true) {
-		return;
+		return message;
 	}
 
 	// threads
