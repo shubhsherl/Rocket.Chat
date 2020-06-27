@@ -79,7 +79,7 @@
 		"chai": "^4.2.0",
 		"chai-datetime": "^1.5.0",
 		"chai-spies": "^1.0.0",
-		"cypress": "4.9.0",
+		"cypress": "4.4.0",
 		"cypress-file-upload": "^4.0.4",
 		"emojione-assets": "^4.5.0",
 		"eslint": "^6.7.2",
