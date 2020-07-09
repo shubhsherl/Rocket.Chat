@@ -1,3 +1,5 @@
+importScripts('localforage.min.js');
+
 const HTMLToCache = '/';
 const version = 'viasat-0.1';
 const storeName = 'post_requests';
@@ -51,39 +53,11 @@ function arrayToJson(objArray) {
 	return result;
 }
 
-async function openDatabase() {
-	return new Promise((resolve, reject) => {
-		const indexedDBOpenRequest = indexedDB.open('post-cache');
-
-		indexedDBOpenRequest.onerror = () => {
-			console.log('IndexedDb error');
-			reject();
-		};
-		indexedDBOpenRequest.onupgradeneeded = function() {
-			this.result.createObjectStore(storeName, { autoIncrement: true, keyPath: 'id' });
-			resolve();
-		};
-
-		indexedDBOpenRequest.onsuccess = function() {
-			db = this.result;
-			resolve();
-		};
-	});
-}
-
-function getObjectStore(readwrite = true) {
-	return db.transaction(storeName, readwrite ? 'readwrite' : 'readonly').objectStore(storeName);
-}
-
 function savePostRequest(url, payload, response) {
 	const keys = jsonToArray(payload);
 	const value = jsonToArray(response);
 	keys.forEach((key, idx) => {
-		getObjectStore().put({
-			url,
-			id: JSON.stringify(key),
-			response: value[idx],
-		});
+		db.setItem(JSON.stringify(key), { response: value[idx] });
 	});
 }
 
@@ -93,15 +67,13 @@ function getPostResponse(payload) {
 		const keys = jsonToArray(payload);
 		keys.forEach(async (key, idx) => {
 			await new Promise((next) => {
-				const getRequest = getObjectStore(false).get(JSON.stringify(key));
-				getRequest.onsuccess = function(event) {
-					event.target.result && responses.push(event.target.result.response);
+				db.getItem(JSON.stringify(key)).then((result) => {
+					result && responses.push(result.response);
 					next();
-				};
-				getRequest.onerror = function(error) {
-					console.log(error);
+				}).catch((err) => {
+					console.log(err);
 					next();
-				};
+				});
 			});
 			if (idx === keys.length - 1) {
 				responses = arrayToJson(responses);
@@ -114,9 +86,9 @@ function getPostResponse(payload) {
 
 function handlePOST(event) {
 	const requestToFetch = event.request.clone();
+	db = db || localforage.createInstance({ name: storeName });
 	event.respondWith(fetch(requestToFetch, { method: 'POST' })
 		.then(async (response) => {
-			await openDatabase();
 			const clonedResponse = response.clone();
 			const formData = await event.request.json();
 			const body = await clonedResponse.json();
@@ -124,7 +96,6 @@ function handlePOST(event) {
 			return response;
 		})
 		.catch(async () => {
-			await openDatabase();
 			const formData = await event.request.json();
 			return getPostResponse(formData);
 		}),
