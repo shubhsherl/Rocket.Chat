@@ -445,3 +445,5 @@ Rocket.Chat will be free forever, but you can help us speed up the development!
 
 
 [BountySource](https://www.bountysource.com/teams/rocketchat)
+
+
