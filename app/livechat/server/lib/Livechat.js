@@ -448,6 +448,7 @@ export const Livechat = {
 			'Livechat_conversation_finished_text',
 			'Livechat_name_field_registration_form',
 			'Livechat_email_field_registration_form',
+			'Assets_livechat_guest_default_avatar',
 			'Livechat_registration_form_message',
 			'Livechat_force_accept_data_processing_consent',
 			'Livechat_data_processing_consent_text',

@@ -102,6 +102,7 @@ export function settings() {
 			allowSwitchingDepartments: initSettings.Livechat_allow_switching_departments,
 			nameFieldRegistrationForm: initSettings.Livechat_name_field_registration_form,
 			emailFieldRegistrationForm: initSettings.Livechat_email_field_registration_form,
+			guestDefaultAvatar: initSettings.Assets_livechat_guest_default_avatar,
 			displayOfflineForm: initSettings.Livechat_display_offline_form,
 			videoCall: initSettings.Livechat_videocall_enabled === true && initSettings.Jitsi_Enabled === true,
 			fileUpload: initSettings.Livechat_fileupload_enabled && initSettings.FileUpload_Enabled,

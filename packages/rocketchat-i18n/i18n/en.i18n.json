@@ -2256,6 +2256,7 @@
   "Livechat_forward_open_chats": "Forward open chats",
   "Livechat_forward_open_chats_timeout": "Timeout (in seconds) to forward chats",
   "Livechat_guest_count": "Guest Counter",
+  "Livechat_guest_default_avatar": "Default Guest Avatar",
   "Livechat_Inquiry_Already_Taken": "Omnichannel inquiry already taken",
   "Livechat_Installation": "Livechat Installation",
   "Livechat_managers": "Omnichannel managers",
