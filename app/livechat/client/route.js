@@ -108,6 +108,30 @@ AccountBox.addRoute({
 }, livechatManagerRoutes, load);
 
 AccountBox.addRoute({
+	name: 'livechat-filters',
+	path: '/filters',
+	sideNav: 'livechatFlex',
+	i18nPageTitle: 'Filters',
+	pageTemplate: 'livechatFilters',
+}, livechatManagerRoutes, load);
+
+AccountBox.addRoute({
+	name: 'livechat-filter-edit',
+	path: '/filters/:_id/edit',
+	sideNav: 'livechatFlex',
+	i18nPageTitle: 'Edit_Filter',
+	pageTemplate: 'livechatFiltersForm',
+}, livechatManagerRoutes, load);
+
+AccountBox.addRoute({
+	name: 'livechat-filter-new',
+	path: '/filters/new',
+	sideNav: 'livechatFlex',
+	i18nPageTitle: 'New_Filter',
+	pageTemplate: 'livechatFiltersForm',
+}, livechatManagerRoutes, load);
+
+AccountBox.addRoute({
 	name: 'livechat-installation',
 	path: '/installation',
 	sideNav: 'livechatFlex',

@@ -19,6 +19,7 @@ addSidebarItem('Managers', 'livechat-managers', 'manage-livechat-managers');
 addSidebarItem('Agents', 'livechat-agents', 'manage-livechat-agents');
 addSidebarItem('Departments', 'livechat-departments', 'view-livechat-departments');
 addSidebarItem('Custom_Fields', 'livechat-customfields', 'view-livechat-customfields');
+addSidebarItem('Livechat_Filters', 'livechat-filters', 'view-livechat-filters');
 addSidebarItem('Livechat_Triggers', 'livechat-triggers', 'view-livechat-triggers');
 addSidebarItem('Livechat_Installation', 'livechat-installation', 'view-livechat-installation');
 addSidebarItem('Livechat_Appearance', 'livechat-appearance', 'view-livechat-appearance');

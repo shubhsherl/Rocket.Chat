@@ -32,6 +32,7 @@ import LivechatDepartmentAgents from './models/LivechatDepartmentAgents';
 import LivechatPageVisited from './models/LivechatPageVisited';
 import LivechatRooms from './models/LivechatRooms';
 import LivechatTrigger from './models/LivechatTrigger';
+import LivechatFilter from './models/LivechatFilter';
 import LivechatVisitors from './models/LivechatVisitors';
 import LivechatAgentActivity from './models/LivechatAgentActivity';
 import LivechatInquiry from './models/LivechatInquiry';
@@ -82,6 +83,7 @@ export {
 	LivechatPageVisited,
 	LivechatRooms,
 	LivechatTrigger,
+	LivechatFilter,
 	LivechatVisitors,
 	LivechatAgentActivity,
 	ReadReceipts,
