@@ -16,8 +16,6 @@ import './app/livechatFiltersForm';
 import './app/livechatTriggers';
 import './app/livechatTriggersForm';
 import './app/livechatManagers';
-import './app/filters/livechatFilterAction';
-import './app/filters/livechatFilterCondition';
 import './app/integrations/livechatIntegrationWebhook';
 import './app/integrations/livechatIntegrationFacebook';
 import './app/triggers/livechatTriggerAction';
