@@ -1,3 +1,5 @@
+import URL from 'url';
+
 import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
 import _ from 'underscore';
@@ -88,16 +90,47 @@ export function normalizeHttpHeaderData(headers = {}) {
 	const httpHeaders = Object.assign({}, headers);
 	return { httpHeaders };
 }
-export function settings() {
+
+export function settings(url) {
 	const initSettings = Livechat.getInitSettings();
 	const triggers = findTriggers();
 	const departments = findDepartments();
 	const sound = `${ Meteor.absoluteUrl() }sounds/chime.mp3`;
 	const emojis = Meteor.call('listEmojiCustom');
+
+	const shouldShowRegistrationForm = () => {
+		if (!url) {
+			return initSettings.Livechat_registration_form;
+		}
+
+		let skipOnDomainList = initSettings.Livechat_skip_registration_form_DomainsList;
+		skipOnDomainList = (!_.isEmpty(skipOnDomainList.trim()) && _.map(skipOnDomainList.split(','), function(domain) {
+			return domain.trim();
+		})) || [];
+
+		const urlObject = URL.parse(url);
+		const { hostname: urlHost, pathname: urlPath } = urlObject;
+
+		const matchedDomain = skipOnDomainList.find((domain) => {
+			if (!domain.match(/^[a-zA-Z]+:\/\//)) {
+				domain = `http://${ domain }`;
+			}
+			const domainUrlObject = URL.parse(domain);
+			const { hostname: domainHost, pathname: domainPath } = domainUrlObject;
+
+			if (domainPath !== '/') {
+				return domainHost.includes(urlHost) && (domainPath === urlPath);
+			}
+			return domainHost.includes(urlHost);
+		});
+
+		return initSettings.Livechat_registration_form && !matchedDomain;
+	};
+
 	return {
 		enabled: initSettings.Livechat_enabled,
 		settings: {
-			registrationForm: initSettings.Livechat_registration_form,
+			registrationForm: shouldShowRegistrationForm(),
 			allowSwitchingDepartments: initSettings.Livechat_allow_switching_departments,
 			nameFieldRegistrationForm: initSettings.Livechat_name_field_registration_form,
 			emailFieldRegistrationForm: initSettings.Livechat_email_field_registration_form,
