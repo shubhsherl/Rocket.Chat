@@ -13,6 +13,11 @@ Template.livechatTriggerAction.helpers({
 			return 'hidden';
 		}
 	},
+	actionSelected(current) {
+		if (this.name === current) {
+			return 'selected';
+		}
+	},
 	showCustomName() {
 		return Template.instance().sender.get() === 'custom' ? '' : 'hidden';
 	},
