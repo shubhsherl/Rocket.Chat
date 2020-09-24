@@ -207,10 +207,10 @@ const TriggersForm: FC<TriggersFormProps> = ({ values, handlers, className }) =>
 				{actionSender === 'custom' && <Field.Row>
 					<TextInput value={actionAgentName} onChange={handleActionAgentName} placeholder={t('Name_of_agent')}/>
 				</Field.Row>}
-				<Field.Row>
-					<TextAreaInput rows={3} value={actionMsg} onChange={handleActionMessage} placeholder={t('Message')}/>
-				</Field.Row>
 			</>}
+			<Field.Row>
+				<TextAreaInput rows={3} value={actionMsg} onChange={handleActionMessage} placeholder={t('Message')}/>
+			</Field.Row>
 		</Field>
 	</>;
 };
